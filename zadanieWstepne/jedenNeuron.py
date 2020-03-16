@@ -18,6 +18,8 @@ class NeuralNetwork:
         for i in range(0, amount_of_tries):
             for j in range(0, len(inputs)):
                 wynikpl = self.funkcja_skokowa(inputs[j])
+                # boze jakie to jest brzydkie ale działa xDDDD
+                # jestem pewien że tutaj by styknął iloczyn skalarny ale już huj
                 if wynikpl == expected_outputs[j]:
                     pass
                 elif wynikpl == 1 and expected_outputs[j] == 0:
