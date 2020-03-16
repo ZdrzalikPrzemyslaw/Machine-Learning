@@ -2,13 +2,13 @@ import numpy
 from matplotlib import pyplot as plt
 import time
 
-class NeuralNetwork():
 
+class NeuralNetwork:
     def __init__(self):
         self.weight_matrix = 10 * numpy.random.random(3) - 5
 
     def funkcja_skokowa(self, inputcik):
-        wynik = numpy.dot(inputcik, self.weight_matrix)
+        wynik = numpy.dot(inputcik, self.weight_matrix)  # iloczyn skalarny tak o świrki
         if wynik > 0:
             return 1
         return 0
@@ -35,7 +35,6 @@ def wczytajPunktyZPliku(fileName):
         lines = plik.read().splitlines()
     lines = [tup for tup in lines if not tup == ""]
     for i in lines:
-        # x, y, z = i.split()\
         liczby = list(map(float, i.split()))
         if liczby[2] == 0:
             punkty_pod.append([liczby[0], liczby[1]])
