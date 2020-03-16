@@ -27,8 +27,8 @@ def main():
     plt.scatter(x, y)
     z = np.linspace(-5, 5, num=10)
     fx = []
-    for i in z:
-        fx.append(var3(i))
+    for i in range(len(z)):
+        fx.append(var3(z[i]))
     plt.plot(z, fx)
     plt.show()
     with open("punkt.txt", "w") as plikPL:
