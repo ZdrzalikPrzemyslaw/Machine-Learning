@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import random
 from itertools import product
 
 
@@ -31,11 +32,23 @@ def main():
         fx.append(var3(i))
     plt.plot(z, fx)
     plt.show()
+    print(c1)
+    print(type(c1))
+    print(type(c1[0]))
+    c3 = []
+    for i in c1:
+        j = list(i)
+        j.append(0)
+        c3.append(j)
+    for i in c2:
+        j = list(i)
+        j.append(1)
+        c3.append(j)
+    print (c3)
+    random.shuffle(c3)
     with open("punkt.txt", "w") as plikPL:
-        for i in c1:
-            plikPL.write(str(i[0]) + " " + str(i[1]) + " 0\r\n")
-        for i in c2:
-            plikPL.write(str(i[0]) + " " + str(i[1]) + " 1\r\n")
+        for i in c3:
+            plikPL.write(str(i[0]) + " " + str(i[1]) + " " + str(i[2]) + "\r\n")
 
 
 if __name__ == "__main__":
