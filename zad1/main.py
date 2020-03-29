@@ -4,37 +4,42 @@ import time
 
 
 class NeuralNetwork:
-    def __init__(self):
-        self.weight_matrix = 2 * numpy.random.random((4, 1)) - 1
+
+    def __init__(self, number_of_neurons, number_of_inputs):
+        self.hidden_layer = 2 * numpy.random.random((number_of_inputs, number_of_neurons)) - 1
+        self.output_layer = 2 * numpy.random.random((number_of_neurons, number_of_inputs)) - 1
+
+    def print(self):
+        print(self.hidden_layer)
+        print(self.output_layer)
 
     def funkcja_sigmoidalna(self, inputcik):
-            return 1/(1+numpy.exp(-inputcik))
+            return 1 / (1 + numpy.exp(-inputcik))
 
-    def pochodna_funckja_sigmoidalna(self, inputcik):
-        return numpy.exp(-inputcik) / ((numpy.exp(-inputcik) + 1) ** 2)
+    def pochodna_funkcja_sigmoidalna(self, inputcik):
+        return inputcik * (1 - inputcik)
 
-    def funkcja_skokowa(self, inputcik):
-        wynik = numpy.dot(inputcik, self.weight_matrix)  # iloczyn skalarny tak o świrki
-        if wynik >= 0:
-            return 1
-        return 0
+    def calculate_outputs(self, inputs):
+        hidden_layer_output = self.funkcja_sigmoidalna(numpy.dot(inputs, self.hidden_layer))
+        output_layer_output = self.funkcja_sigmoidalna(numpy.dot(hidden_layer_output, self.output_layer))
+        return hidden_layer_output, output_layer_output
 
-    def train(self, inputs, expected_outputs, amount_of_tries):
-        for i in range(0, amount_of_tries):
-            wspolczynnik_uczenia = numpy.random.random(1)
-            for j in range(0, len(inputs)):
-                wynikpl = self.funkcja_skokowa(inputs[j])
-                # boze jakie to jest brzydkie ale działa xDDDD
-                # jestem pewien że tutaj by styknął iloczyn skalarny ale już huj
-                if wynikpl == expected_outputs[j]:
-                    pass
-                elif wynikpl == 1 and expected_outputs[j] == 0:
-                    self.weight_matrix -= wspolczynnik_uczenia * inputs[j]
-                elif wynikpl == 0 and expected_outputs[j] == 1:
-                    self.weight_matrix += wspolczynnik_uczenia * inputs[j]
-                pass
-            pass
-        pass
+    def train(self, inputs, expected_outputs, epoch_count):
+        for it in range(epoch_count):
+            hidden_layer_output, output_layer_output = self.calculate_outputs(inputs)
+
+            output_error = expected_outputs - output_layer_output
+            output_delta = output_error * self.pochodna_funkcja_sigmoidalna(output_layer_output)
+
+
+            hidden_layer_error = output_delta.dot(self.output_layer.T)
+            hidden_layer_delta = hidden_layer_error * self.pochodna_funkcja_sigmoidalna(hidden_layer_output)
+
+            hidden_layer_adjustment = inputs.T.dot(hidden_layer_delta)
+            output_layer_adjustment = hidden_layer_output.T.dot(output_delta)
+
+            self.hidden_layer += hidden_layer_adjustment
+            self.output_layer += output_layer_adjustment
 
 
 def wczytajPunktyZPliku(file_name):
@@ -51,10 +56,11 @@ def wczytajPunktyZPliku(file_name):
 
 
 def main():
-    siec = NeuralNetwork()
-    print(wczytajPunktyZPliku("dane.txt"))
-    print(siec.funkcja_sigmoidalna(wczytajPunktyZPliku("dane.txt")))
-    print(siec.pochodna_funckja_sigmoidalna(wczytajPunktyZPliku("dane.txt")))
+    siec = NeuralNetwork(4, 4)
+    # siec.print()
+    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt"), 60000)
+    # siec.print()
+    print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt")))
 
 
 if __name__ == "__main__":
