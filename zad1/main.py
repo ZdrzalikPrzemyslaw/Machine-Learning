@@ -59,9 +59,9 @@ def main():
     # liczba neuronów w warstwie ukrytej, liczba neuronów na wyjściu, liczba inputów
     siec = NeuralNetwork(3, 4, 4)
     # siec.print()
-    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt"), 600)
+    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt").T, 60000)
     siec.print()
-    print(siec.calculate_outputs(wczytajPunktyZPliku("dane2.txt")))
+    print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt")))
 
 
 if __name__ == "__main__":
