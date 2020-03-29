@@ -97,7 +97,7 @@ def main():
     plt.show()
     plt.scatter(x1, y1)
     plt.scatter(x2, y2)
-    neural_network.train(train_inputs, train_outputs, 9)
+    neural_network.train(train_inputs, train_outputs, 999)
     print('Nowe wagi po treningu 10 razy')
     print(neural_network.weight_matrix)
     var3 = numpy.poly1d([neural_network.weight_matrix[0] / -neural_network.weight_matrix[1],
