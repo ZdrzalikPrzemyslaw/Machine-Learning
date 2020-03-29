@@ -3,15 +3,15 @@ import time
 
 
 class NeuralNetwork:
+    def __repr__(self):
+        return "Instance of NeuralNetwork"
+
+    def __str__(self):
+        return str(self.hidden_layer) + "\n" + str(self.output_layer)
 
     def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, number_of_inputs):
         self.hidden_layer = 2 * numpy.random.random((number_of_inputs, number_of_neurons_hidden_layer)) - 1
         self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)) - 1
-
-    def print(self):
-        print(self.hidden_layer)
-        print("")
-        print(self.output_layer)
 
     def funkcja_sigmoidalna(self, inputcik):
             return 1 / (1 + numpy.exp(-inputcik))
@@ -60,7 +60,7 @@ def main():
     siec = NeuralNetwork(3, 4, 4)
     # siec.print()
     siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt").T, 60000)
-    siec.print()
+    print(siec)
     print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt")))
 
 
