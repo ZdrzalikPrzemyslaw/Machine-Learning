@@ -5,9 +5,9 @@ import time
 
 class NeuralNetwork:
 
-    def __init__(self, number_of_neurons, number_of_inputs):
-        self.hidden_layer = 2 * numpy.random.random((number_of_inputs, number_of_neurons)) - 1
-        self.output_layer = 2 * numpy.random.random((number_of_neurons, number_of_inputs)) - 1
+    def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, number_of_inputs):
+        self.hidden_layer = 2 * numpy.random.random((number_of_inputs, number_of_neurons_hidden_layer)) - 1
+        self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)) - 1
 
     def print(self):
         print(self.hidden_layer)
