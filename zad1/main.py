@@ -58,10 +58,11 @@ def wczytajPunktyZPliku(file_name):
 def main():
     # liczba neuronów w warstwie ukrytej, liczba neuronów na wyjściu, liczba inputów
     siec = NeuralNetwork(3, 4, 4)
-    # siec.print()
+    # print(siec)
     siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt").T, 60000)
-    print(siec)
-    print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt")))
+    # print(siec)
+    print("Wynik:")
+    print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt"))[1])
 
 
 if __name__ == "__main__":
