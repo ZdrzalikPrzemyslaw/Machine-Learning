@@ -1,5 +1,4 @@
 import numpy
-from matplotlib import pyplot as plt
 import time
 
 
@@ -11,6 +10,7 @@ class NeuralNetwork:
 
     def print(self):
         print(self.hidden_layer)
+        print("")
         print(self.output_layer)
 
     def funkcja_sigmoidalna(self, inputcik):
@@ -56,11 +56,12 @@ def wczytajPunktyZPliku(file_name):
 
 
 def main():
-    siec = NeuralNetwork(4, 4)
+    # liczba neuronów w warstwie ukrytej, liczba neuronów na wyjściu, liczba inputów
+    siec = NeuralNetwork(3, 4, 4)
     # siec.print()
-    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt"), 60000)
-    # siec.print()
-    print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt")))
+    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt"), 600)
+    siec.print()
+    print(siec.calculate_outputs(wczytajPunktyZPliku("dane2.txt")))
 
 
 if __name__ == "__main__":
