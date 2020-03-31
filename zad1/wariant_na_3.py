@@ -25,7 +25,7 @@ class NeuralNetwork:
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     def calculate_outputs(self, inputs):
         hidden_layer_output = self.funkcja_sigmoidalna(numpy.dot(inputs, self.hidden_layer))
-        output_layer_output = self.funkcja_sigmoidalna(numpy.dot(hidden_layer_output, self.output_layer))
+        output_layer_output = self.funkcja_sigmoidalna(numpy.dot(hidden_layer_output, self.output_layer)).T
         return hidden_layer_output, output_layer_output
 
     #trening, tyle razy ile podamy epochów
@@ -39,12 +39,12 @@ class NeuralNetwork:
 
             # tutaj jakieś czary mary totalne, patrzymy w jakiś magiczny sposób jak bardzo na błąd w warstwie zewnętrznej
             # miały wpływ wagi w warstwie ukrytej
-            hidden_layer_error = output_delta.dot(self.output_layer.T)
+            hidden_layer_error = output_delta.T.dot(self.output_layer.T)
             hidden_layer_delta = hidden_layer_error * self.pochodna_funkcja_sigmoidalna(hidden_layer_output)
 
             # wyliczamy zmianę wag
             hidden_layer_adjustment = inputs.T.dot(hidden_layer_delta)
-            output_layer_adjustment = hidden_layer_output.T.dot(output_delta)
+            output_layer_adjustment = hidden_layer_output.T.dot(output_delta.T)
 
             self.hidden_layer += hidden_layer_adjustment
             self.output_layer += output_layer_adjustment
@@ -59,7 +59,7 @@ def wczytajPunktyZPliku(file_name):
         for j in  list(map(int, i.split())):
             one_dim_list.append(j)
         two_dim_list_of_return_values.append(one_dim_list)
-    return numpy.asarray(two_dim_list_of_return_values)
+    return numpy.asarray(two_dim_list_of_return_values).T
 
 
 def main():
