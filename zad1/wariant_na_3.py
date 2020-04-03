@@ -21,18 +21,18 @@ class NeuralNetwork:
     # Tworzymy sobie dwa matrixy
     def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, number_of_inputs, is_bias):
         self.is_bias = is_bias
-        self.hidden_layer = (2 * numpy.random.random((number_of_inputs, number_of_neurons_hidden_layer)).T - 1)
-        self.delta_weights_hidden_layer = numpy.zeros((number_of_inputs, number_of_neurons_hidden_layer)).T
-        self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)).T - 1
-        self.delta_weights_output_layer = numpy.zeros((number_of_neurons_hidden_layer, number_of_neurons_output)).T
-        if is_bias:
-            self.bias_hidden_layer = (2 * numpy.random.random(number_of_neurons_hidden_layer) - 1)
-            self.bias_output_layer = (2 * numpy.random.random(number_of_neurons_output) - 1)
-        else:
-            self.bias_hidden_layer = numpy.zeros(number_of_neurons_hidden_layer)
-            self.bias_output_layer = numpy.zeros(number_of_neurons_output)
-        self.bias_output_layer_delta = numpy.zeros(number_of_neurons_output)
-        self.bias_hidden_layer_delta = numpy.zeros(number_of_neurons_hidden_layer)
+        self.hidden_layer = (2 * numpy.random.random((number_of_inputs + is_bias, number_of_neurons_hidden_layer)).T - 1)
+        self.delta_weights_hidden_layer = numpy.zeros((number_of_inputs + is_bias, number_of_neurons_hidden_layer)).T
+        self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer + is_bias, number_of_neurons_output)).T - 1
+        self.delta_weights_output_layer = numpy.zeros((number_of_neurons_hidden_layer + is_bias, number_of_neurons_output)).T
+        # if is_bias:
+        #     self.bias_hidden_layer = (2 * numpy.random.random(number_of_neurons_hidden_layer) - 1)
+        #     self.bias_output_layer = (2 * numpy.random.random(number_of_neurons_output) - 1)
+        # else:
+        #     self.bias_hidden_layer = numpy.zeros(number_of_neurons_hidden_layer)
+        #     self.bias_output_layer = numpy.zeros(number_of_neurons_output)
+        # self.bias_output_layer_delta = numpy.zeros(number_of_neurons_output)
+        # self.bias_hidden_layer_delta = numpy.zeros(number_of_neurons_hidden_layer)
 
     def sigmoid_fun(self, inputcik):
             return 1 / (1 + numpy.exp(-inputcik))
@@ -47,29 +47,38 @@ class NeuralNetwork:
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     def calculate_outputs(self, inputs):
 
-        hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) + self.bias_hidden_layer)
-        output_layer_output = self.sigmoid_fun(numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer)
+
+
+        hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) )
+
+        if self.is_bias:
+            hidden_layer_output = numpy.insert(hidden_layer_output, 0, 1)
+
+
+        output_layer_output = self.sigmoid_fun(numpy.dot(hidden_layer_output, self.output_layer.T))
 
         return hidden_layer_output, output_layer_output
 
     #trening, tyle razy ile podamy epochów
     def train(self, inputs, expected_outputs, epoch_count):
         error_list = []
+        if self.is_bias:
+            inputs = numpy.insert(inputs, 0, 1, axis=1)
+        joined_arrays = list(zip(inputs, expected_outputs))
         for it in range(epoch_count):
 
+
             # Shuffle once each iteration
-            joined_arrays = numpy.concatenate((inputs, expected_outputs), axis=1)
             numpy.random.shuffle(joined_arrays)
-            joined_arrays_left, joined_arrays_right = numpy.hsplit(joined_arrays, 2)
-            numpy.testing.assert_array_equal(joined_arrays_left, joined_arrays_right)
 
 
             mean_squared_error = 0
             it = 0
 
-            for k, j in zip(joined_arrays_left, joined_arrays_right):
+            for k, j in joined_arrays:
 
                 hidden_layer_output, output_layer_output = self.calculate_outputs(k)
+
 
                 output_error = j - output_layer_output
 
@@ -77,6 +86,7 @@ class NeuralNetwork:
                 it += 1
 
                 output_delta = output_error * self.sigmoid_fun_deriative(output_layer_output)
+
                 # print(output_delta)
                 # print(self.output_layer.T)
 
@@ -86,6 +96,10 @@ class NeuralNetwork:
                     hidden_layer_error.append(i.dot(output_delta))
                 hidden_layer_error = numpy.asarray(hidden_layer_error)
                 hidden_layer_delta = hidden_layer_error * self.sigmoid_fun_deriative(hidden_layer_output)
+
+                if self.is_bias:
+                    hidden_layer_error = hidden_layer_error[1:]
+                    hidden_layer_delta = hidden_layer_error * self.sigmoid_fun_deriative(hidden_layer_output[1:])
 
                 output_layer_adjustment = []
                 for i in output_delta:
@@ -106,13 +120,16 @@ class NeuralNetwork:
                 # print(hidden_layer_adjustment)
                 # exit(123)
 
-                if self.is_bias:
-                    hidden_bias_adjustment = eta * hidden_layer_delta + alfa * self.bias_hidden_layer_delta
-                    output_bias_adjustment = eta * output_delta + alfa * self.bias_output_layer_delta
-                    self.bias_hidden_layer += hidden_bias_adjustment
-                    self.bias_output_layer += output_bias_adjustment
-                    self.bias_hidden_layer_delta -= hidden_bias_adjustment
-                    self.bias_output_layer_delta -= output_bias_adjustment
+                # if self.is_bias:
+                #     hidden_bias_adjustment = eta * hidden_layer_delta + alfa * self.bias_hidden_layer_delta
+                #     output_bias_adjustment = eta * output_delta + alfa * self.bias_output_layer_delta
+                #     self.bias_hidden_layer += hidden_bias_adjustment
+                #     self.bias_output_layer += output_bias_adjustment
+                #     self.bias_hidden_layer_delta -= hidden_bias_adjustment
+                #     self.bias_output_layer_delta -= output_bias_adjustment
+
+                # print(hidden_layer_adjustment)
+                # print(self.delta_weights_hidden_layer)
 
                 hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
                 output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
@@ -171,32 +188,32 @@ def read_2d_int_array_from_file(file_name):
 def main():
     numpy.random.seed(0)
     # liczba neuronów w warstwie ukrytej, liczba wyjść, liczba inputów
-    siec = NeuralNetwork(3, 4, 4, False)
+    siec = NeuralNetwork(1, 4, 4, True)
     # print(siec)
 
 
-    # print(siec)
-    siec.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 100000)
+    print(siec)
+    siec.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 3000)
 
     plot_file()
 
-    print("Wynik:")
-    inpuciki = read_2d_int_array_from_file("dane.txt")[0]
-    print(inpuciki)
-    inpuciki = numpy.asarray([0, 1, 0, 0])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = numpy.asarray([1, 0, 0, 0])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = numpy.asarray([0, 0, 1, 0])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = numpy.asarray([0, 0, 0, 1])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = read_2d_int_array_from_file("dane.txt")
-    print(siec.calculate_outputs(inpuciki)[1])
+    # print("Wynik:")
+    # inpuciki = read_2d_int_array_from_file("dane.txt")[0]
+    # print(inpuciki)
+    # inpuciki = numpy.asarray([0, 1, 0, 0])
+    # print(inpuciki)
+    # print(siec.calculate_outputs(inpuciki)[1])
+    # inpuciki = numpy.asarray([1, 0, 0, 0])
+    # print(inpuciki)
+    # print(siec.calculate_outputs(inpuciki)[1])
+    # inpuciki = numpy.asarray([0, 0, 1, 0])
+    # print(inpuciki)
+    # print(siec.calculate_outputs(inpuciki)[1])
+    # inpuciki = numpy.asarray([0, 0, 0, 1])
+    # print(inpuciki)
+    # print(siec.calculate_outputs(inpuciki)[1])
+    # inpuciki = read_2d_int_array_from_file("dane.txt")
+    # print(siec.calculate_outputs(inpuciki)[1])
 
 
 if __name__ == "__main__":
