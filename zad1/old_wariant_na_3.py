@@ -47,10 +47,10 @@ class NeuralNetwork:
             hidden_layer_adjustment = inputs.T.dot(hidden_layer_delta)
             output_layer_adjustment = hidden_layer_output.T.dot(output_delta.T)
 
-            print("hidden_layer_output\n", hidden_layer_output, "\n",  "output_layer_output\n", output_layer_output
-                  , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
-                  , "\nhidden_layer_error\n", hidden_layer_error, "\nhidden_layer_delta\n", hidden_layer_delta
-                  , "\nhidden_layer_adjustment\n", hidden_layer_adjustment, "\noutput_layer_adjustment\n", output_layer_adjustment)
+            # print("hidden_layer_output\n", hidden_layer_output, "\n",  "output_layer_output\n", output_layer_output
+            #       , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
+            #       , "\nhidden_layer_error\n", hidden_layer_error, "\nhidden_layer_delta\n", hidden_layer_delta
+            #       , "\nhidden_layer_adjustment\n", hidden_layer_adjustment, "\noutput_layer_adjustment\n", output_layer_adjustment)
 
 
             self.hidden_layer += hidden_layer_adjustment
@@ -71,12 +71,14 @@ def wczytajPunktyZPliku(file_name):
 
 def main():
     # liczba neuronów w warstwie ukrytej, liczba neuronów na wyjściu, liczba inputów
-    siec = NeuralNetwork(2, 4, 4)
+    siec = NeuralNetwork(3, 4, 4)
     # print(siec)
-    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt").T, 1)
+    siec.train(wczytajPunktyZPliku("dane.txt"), wczytajPunktyZPliku("dane.txt").T, 10000)
     # print(siec)
     print("Wynik:")
     print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt"))[1])
+    print(siec.calculate_outputs(wczytajPunktyZPliku("dane.txt")[1])[1])
+    print(siec.calculate_outputs(wczytajPunktyZPliku("dane2.txt"))[1])
 
 
 if __name__ == "__main__":

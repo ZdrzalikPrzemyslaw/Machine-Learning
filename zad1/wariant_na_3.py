@@ -27,8 +27,11 @@ class NeuralNetwork:
             return 1 / (1 + numpy.exp(-inputcik))
 
     # z wolfram alpha
+    # def sigmoid_fun_deriative(self, inputcik):
+    #     return numpy.exp(-inputcik) /  ((numpy.exp(-inputcik) + 1) ** 2)
+
     def sigmoid_fun_deriative(self, inputcik):
-        return numpy.exp(-inputcik) /  ((numpy.exp(-inputcik) + 1) ** 2)
+        return inputcik * ( 1 - inputcik)
 
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     def calculate_outputs(self, inputs):
@@ -41,6 +44,7 @@ class NeuralNetwork:
         for i in self.output_layer:
             output_layer_output.append(numpy.dot(i, hidden_layer_output))
         output_layer_output = self.sigmoid_fun(numpy.asarray(output_layer_output))
+        # print("JD", output_layer_output)
         return hidden_layer_output, output_layer_output
 
     #trening, tyle razy ile podamy epochów
@@ -58,6 +62,9 @@ class NeuralNetwork:
 
                 output_error = j - output_layer_output
                 output_delta = output_error * self.sigmoid_fun_deriative(output_layer_output)
+                # print(output_delta)
+                # print(self.output_layer.T)
+
 
                 hidden_layer_error = []
                 for i in self.output_layer.T:
@@ -74,21 +81,29 @@ class NeuralNetwork:
                 for i in hidden_layer_delta:
                     hidden_layer_adjustment.append(k * i)
                 hidden_layer_adjustment = numpy.asarray(hidden_layer_adjustment)
+                # print("hidden_layer_output\n", hidden_layer_output, "\n", "output_layer_output\n", output_layer_output
+                #       , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
+                #       , "\nhidden_layer_error\n", hidden_layer_error, "\nhidden_layer_delta\n", hidden_layer_delta
+                #       , "\nhidden_layer_adjustment\n", hidden_layer_adjustment, "\noutput_layer_adjustment\n", output_layer_adjustment)
 
                 # print(self.hidden_layer)
                 # print(self.delta_weights_hidden_layer)
+                # print(hidden_layer_adjustment)
+                # exit(123)
+                hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
+                output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
 
-                self.hidden_layer += eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
-                self.output_layer += eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
+                self.hidden_layer += hidden_layer_adjustment
+                self.output_layer += output_layer_adjustment
 
                 self.delta_weights_hidden_layer = -hidden_layer_adjustment
                 self.delta_weights_output_layer = -output_layer_adjustment
 
-                if it % 100 == 0:
-                    print("iteration - ", it)
-                    print(k)
-                    print(j)
-                    print(output_layer_output)
+                # if it % 100 == 0:
+                #                 #     print("iteration - ", it)
+                #                 #     print(k)
+                #                 #     print(j)
+                #                 #     print(output_layer_output)
 
                     # print("hidden_layer_output\n", hidden_layer_output, "\n", "output_layer_output\n", output_layer_output
                     #       , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
@@ -115,10 +130,10 @@ def main():
 
 
     # print(siec)
-    siec.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 100000)
-    # print("Wynik:")
-    # inpuciki = read_2d_int_array_from_file("dane.txt")[0]
-    # print(inpuciki)
+    siec.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 10000)
+    print("Wynik:")
+    inpuciki = read_2d_int_array_from_file("dane.txt")[0]
+    print(inpuciki)
     inpuciki = numpy.asarray([0, 1, 0, 0])
     print(inpuciki)
     print(siec.calculate_outputs(inpuciki)[1])
