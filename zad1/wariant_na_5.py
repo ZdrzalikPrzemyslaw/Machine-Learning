@@ -1,7 +1,5 @@
 import numpy
 import time
-from Layer import Layer
-# import bigfloat
 
 import matplotlib.pyplot as plt
 
@@ -18,10 +16,11 @@ class NeuralNetwork:
     def __str__(self):
         if self.is_bias:
             return "hidden_layer (wiersze - neurony) :\n" + str(
-                self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer) + "\nbiashiddenlayer\n" + str(
+                self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(
+                self.output_layer) + "\nbiashiddenlayer\n" + str(
                 self.bias_hidden_layer) + "\nbiasoutputlayer\n" + str(self.bias_output_layer)
-        return "hidden_layer (wiersze - neurony) :\n" + str(self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer)
-
+        return "hidden_layer (wiersze - neurony) :\n" + str(
+            self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer)
 
     def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, number_of_inputs, is_bias):
         # czy uruchomilismy bias
@@ -45,7 +44,7 @@ class NeuralNetwork:
 
     # Wzór funkcji
     def sigmoid_fun(self, inputcik):
-            return 1 / (1 + numpy.exp(-inputcik))
+        return 1 / (1 + numpy.exp(-inputcik))
 
     # interesujące jest to, że według mojej wiedzy te wzory są równe sobie a dają dość bardzo różne wyniki w niektórych przypadkach
     # z wolfram alpha
@@ -53,14 +52,15 @@ class NeuralNetwork:
     #     return numpy.exp(-inputcik) /  ((numpy.exp(-inputcik) + 1) ** 2)
 
     def sigmoid_fun_deriative(self, inputcik):
-        return inputcik * ( 1 - inputcik)
+        return inputcik * (1 - inputcik)
 
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     def calculate_outputs(self, inputs):
 
         hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) + self.bias_hidden_layer)
-        output_layer_output = self.sigmoid_fun(numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer)
+        output_layer_output = self.sigmoid_fun(
+            numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer)
 
         return hidden_layer_output, output_layer_output
 
@@ -74,15 +74,11 @@ class NeuralNetwork:
         correct_2_list = []
         joined_arrays = numpy.vstack((inputs.T, expected_outputs.T)).T
         for it in range(epoch_count):
-            # print("ITERATION ", it)
 
             # Shuffle once each iteration
             numpy.random.shuffle(joined_arrays)
-            joined_arrays_left = joined_arrays[:,:-1]
-            joined_arrays_right = joined_arrays[:,-1:]
-            # print(joined_arrays)
-            # print(joined_arrays_left)
-            # print(joined_arrays_right)
+            joined_arrays_left = joined_arrays[:, :-1]
+            joined_arrays_right = joined_arrays[:, -1:]
             correct_amount = 0
             correct_0_amount = 0
             correct_1_amount = 0
@@ -95,14 +91,11 @@ class NeuralNetwork:
 
             for k, j in zip(joined_arrays_left, joined_arrays_right):
 
-
                 hidden_layer_output, output_layer_output = self.calculate_outputs(k)
 
                 # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
-                # print(output_layer_output)
-                # print(j)
 
-                #SPAGHETTI CODE HERE
+                # SPAGHETTI CODE HERE
                 old_j = j
                 if j == 1:
                     j = numpy.asarray([1, 0, 0])
@@ -122,7 +115,6 @@ class NeuralNetwork:
                     if old_j == 3:
                         correct_2 += 1
                 output_error = output_layer_output - j
-                # print(output_error)
                 mean_squared_error += output_error.dot(output_error) / 2
                 ite += 1
 
@@ -156,7 +148,7 @@ class NeuralNetwork:
                     self.bias_hidden_layer_delta = hidden_bias_adjustment
                     self.bias_output_layer_delta = output_bias_adjustment
 
-                #wyliczamy zmianę korzystając z współczynnika uczenia i momentum
+                # wyliczamy zmianę korzystając z współczynnika uczenia i momentum
                 hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
                 output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
 
@@ -167,19 +159,13 @@ class NeuralNetwork:
                 # zapisujemy zmianę wag by użyć ją w momentum
                 self.delta_weights_hidden_layer = hidden_layer_adjustment
                 self.delta_weights_output_layer = output_layer_adjustment
-                # print("hidden_layer_output\n", hidden_layer_output, "\n", "output_layer_output\n", output_layer_output
-                #       , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
-                #       , "\nhidden_layer_error\n", hidden_layer_error, "\nhidden_layer_delta\n", hidden_layer_delta
-                #       , "\nhidden_layer_adjustment\n", hidden_layer_adjustment, "\noutput_layer_adjustment\n", output_layer_adjustment)
-                #
-                # exit(123)
 
             mean_squared_error = mean_squared_error / ite
             error_list.append(mean_squared_error)
-            correct_list.append(correct_amount/ite)
-            correct_0_list.append(correct_0/correct_0_amount)
-            correct_1_list.append(correct_1/correct_1_amount)
-            correct_2_list.append(correct_2/correct_2_amount)
+            correct_list.append(correct_amount / ite)
+            correct_0_list.append(correct_0 / correct_0_amount)
+            correct_1_list.append(correct_1 / correct_1_amount)
+            correct_2_list.append(correct_2 / correct_2_amount)
         print("OSTATNI BLAD", error_list[-1])
         # po przejściu przez wszystkie epoki zapisujemy błędy średniokwadratowe do pliku
         with open("mean_squared_error.txt", "w") as file:
@@ -198,20 +184,21 @@ class NeuralNetwork:
             for i in correct_2_list:
                 file.write(str(i) + "\n")
 
+
 # otwieramy plik errorów i go plotujemy
-def plot_file(name = "mean_squared_error.txt"):
+def plot_file(name="mean_squared_error.txt"):
     if name == "correct_assigment.txt":
-        with open ("correct_assigment0.txt", "r") as file:
+        with open("correct_assigment0.txt", "r") as file:
             lines = file.read().splitlines()
         values0 = []
         for i in lines:
             values0.append(float(i))
-        with open ("correct_assigment1.txt", "r") as file:
+        with open("correct_assigment1.txt", "r") as file:
             lines = file.read().splitlines()
         values1 = []
         for i in lines:
             values1.append(float(i))
-        with open ("correct_assigment2.txt", "r") as file:
+        with open("correct_assigment2.txt", "r") as file:
             lines = file.read().splitlines()
         values2 = []
         for i in lines:
@@ -240,6 +227,7 @@ def plot_file(name = "mean_squared_error.txt"):
         plt.plot(values, 'o', markersize=1)
     plt.show()
 
+
 # funkcja zwraca 2d array floatów w postaci arraya z paczki numpy.
 def read_2d_float_array_from_file(file_name):
     two_dim_list_of_return_values = []
@@ -252,13 +240,15 @@ def read_2d_float_array_from_file(file_name):
         two_dim_list_of_return_values.append(one_dim_list)
     return numpy.asarray(two_dim_list_of_return_values)
 
+
 def main():
     numpy.random.seed(0)
 
     # neurony, wyjścia, wejścia, bias
     siec = NeuralNetwork(5, 3, 1, True)
 
-    siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt")[:, 3:5], 1, 1), read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
+    siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt")[:, 3:5], 1, 1),
+               read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
 
     plot_file()
     plot_file("correct_assigment.txt")
@@ -289,4 +279,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

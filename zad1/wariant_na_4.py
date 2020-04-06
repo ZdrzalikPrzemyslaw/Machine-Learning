@@ -1,6 +1,5 @@
 import numpy
 import time
-from Layer import Layer
 # import bigfloat
 
 import matplotlib.pyplot as plt
@@ -18,10 +17,11 @@ class NeuralNetwork:
     def __str__(self):
         if self.is_bias:
             return "hidden_layer (wiersze - neurony) :\n" + str(
-                self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer) + "\nbiashiddenlayer\n" + str(
+                self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(
+                self.output_layer) + "\nbiashiddenlayer\n" + str(
                 self.bias_hidden_layer) + "\nbiasoutputlayer\n" + str(self.bias_output_layer)
-        return "hidden_layer (wiersze - neurony) :\n" + str(self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer)
-
+        return "hidden_layer (wiersze - neurony) :\n" + str(
+            self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer)
 
     def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, number_of_inputs, is_bias):
         # czy uruchomilismy bias
@@ -45,7 +45,7 @@ class NeuralNetwork:
 
     # Wzór funkcji
     def sigmoid_fun(self, inputcik):
-            return 1 / (1 + numpy.exp(-inputcik))
+        return 1 / (1 + numpy.exp(-inputcik))
 
     # interesujące jest to, że według mojej wiedzy te wzory są równe sobie a dają dość bardzo różne wyniki w niektórych przypadkach
     # z wolfram alpha
@@ -53,7 +53,7 @@ class NeuralNetwork:
     #     return numpy.exp(-inputcik) /  ((numpy.exp(-inputcik) + 1) ** 2)
 
     def sigmoid_fun_deriative(self, inputcik):
-        return inputcik * ( 1 - inputcik)
+        return inputcik * (1 - inputcik)
 
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
@@ -116,7 +116,7 @@ class NeuralNetwork:
                     self.bias_hidden_layer_delta = hidden_bias_adjustment
                     self.bias_output_layer_delta = output_bias_adjustment
 
-                #wyliczamy zmianę korzystając z współczynnika uczenia i momentum
+                # wyliczamy zmianę korzystając z współczynnika uczenia i momentum
                 hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
                 output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
 
@@ -127,12 +127,6 @@ class NeuralNetwork:
                 # zapisujemy zmianę wag by użyć ją w momentum
                 self.delta_weights_hidden_layer = hidden_layer_adjustment
                 self.delta_weights_output_layer = output_layer_adjustment
-                # print("hidden_layer_output\n", hidden_layer_output, "\n", "output_layer_output\n", output_layer_output
-                #       , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
-                #       , "\nhidden_layer_error\n", hidden_layer_error, "\nhidden_layer_delta\n", hidden_layer_delta
-                #       , "\nhidden_layer_adjustment\n", hidden_layer_adjustment, "\noutput_layer_adjustment\n", output_layer_adjustment)
-                #
-                # exit(123)
 
             mean_squared_error = mean_squared_error / ite
             error_list.append(mean_squared_error)
@@ -142,9 +136,10 @@ class NeuralNetwork:
             for i in error_list:
                 file.write(str(i) + "\n")
 
+
 # otwieramy plik errorów i go plotujemy
 def plot_file():
-    with open ("mean_squared_error.txt", "r") as file:
+    with open("mean_squared_error.txt", "r") as file:
         lines = file.read().splitlines()
     values = []
     for i in lines:
@@ -175,36 +170,32 @@ def read_2d_float_array_from_file(file_name):
         lines = file.read().splitlines()
     for i in lines:
         one_dim_list = []
-        for j in  list(map(float, i.split())):
+        for j in list(map(float, i.split())):
             one_dim_list.append(j)
         two_dim_list_of_return_values.append(one_dim_list)
     return numpy.asarray(two_dim_list_of_return_values)
 
+
 def main():
     numpy.random.seed(0)
     neurons = 7
+    # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, 1, True)
-    # print(siec)
-    # #dane wejściowe, dane wyjściowe, ilość epochów
-    # print(read_2d_float_array_from_file("approximation_train_1.txt")[:,1])
     train_file = "approximation_train_1.txt"
     iterations = 1000
-    siec.train(read_2d_float_array_from_file(train_file)[:,0], read_2d_float_array_from_file(train_file)[:,1], iterations)
-    # print(siec)
+    # dane wejściowe, dane wyjściowe, ilość epochów
+    siec.train(read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1],
+               iterations)
     plot_file()
     counter = 0
     blad = 0
     for i in read_2d_float_array_from_file("approximation_test.txt"):
-        blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1])**2)/2
-        # print(siec.calculate_outputs(i[0])[1][0][0], i[1])
+        blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
         counter += 1
     blad = blad / counter
     plot_function(siec, train_file, neurons)
     print("BLAD ", blad)
-    # print(siec)
-
 
 
 if __name__ == "__main__":
     main()
-
