@@ -1,13 +1,14 @@
 import numpy
 import time
 from Layer import Layer
+# import bigfloat
 
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.6
+eta = 0.2
 # momentum
-alfa = 0.2
+alfa = 0
 
 
 class NeuralNetwork:
@@ -54,13 +55,12 @@ class NeuralNetwork:
     def sigmoid_fun_deriative(self, inputcik):
         return inputcik * ( 1 - inputcik)
 
-
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     def calculate_outputs(self, inputs):
 
         hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) + self.bias_hidden_layer)
-        output_layer_output = self.sigmoid_fun(numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer)
+        output_layer_output = numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer
 
         return hidden_layer_output, output_layer_output
 
@@ -71,11 +71,9 @@ class NeuralNetwork:
         for it in range(epoch_count):
 
             # Shuffle once each iteration
-            joined_arrays = numpy.concatenate((inputs, expected_outputs), axis=1)
+            joined_arrays = numpy.vstack((inputs, expected_outputs)).T
             numpy.random.shuffle(joined_arrays)
             joined_arrays_left, joined_arrays_right = numpy.hsplit(joined_arrays, 2)
-            numpy.testing.assert_array_equal(joined_arrays_left, joined_arrays_right)
-
             mean_squared_error = 0
             ite = 0
 
@@ -90,7 +88,8 @@ class NeuralNetwork:
 
                 # output_delta - współczynnik zmiany wagi dla warstwy wyjściowej. Otrzymujemy jeden współczynnik dla każdego neronu.
                 # aby potem wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
-                output_delta = output_error * self.sigmoid_fun_deriative(output_layer_output)
+                # Pochodna funkcji liniowej = 1
+                output_delta = output_error * 1
 
                 # korzystamy z wcześniej otrzymanego współczynniku błędu aby wyznaczyć błąd dla warstwy ukrytej
                 hidden_layer_error = output_delta.T.dot(self.output_layer)
@@ -128,10 +127,16 @@ class NeuralNetwork:
                 # zapisujemy zmianę wag by użyć ją w momentum
                 self.delta_weights_hidden_layer = hidden_layer_adjustment
                 self.delta_weights_output_layer = output_layer_adjustment
+                # print("hidden_layer_output\n", hidden_layer_output, "\n", "output_layer_output\n", output_layer_output
+                #       , "\noutput_error\n", output_error, "\noutput_delta\n", output_delta
+                #       , "\nhidden_layer_error\n", hidden_layer_error, "\nhidden_layer_delta\n", hidden_layer_delta
+                #       , "\nhidden_layer_adjustment\n", hidden_layer_adjustment, "\noutput_layer_adjustment\n", output_layer_adjustment)
+                #
+                # exit(123)
 
             mean_squared_error = mean_squared_error / ite
             error_list.append(mean_squared_error)
-
+        print("OSTATNI BLAD", error_list[-1])
         # po przejściu przez wszystkie epoki zapisujemy błędy średniokwadratowe do pliku
         with open("mean_squared_error.txt", "w") as file:
             for i in error_list:
@@ -145,42 +150,59 @@ def plot_file():
     for i in lines:
         values.append(float(i))
     plt.plot(values, 'o', markersize=1)
+    plt.xlabel('Iteracja')
+    plt.ylabel('Wartość błędu')
+    plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
     plt.show()
 
-# funkcja zwraca 2d array intów w postaci arraya z paczki numpy.
-def read_2d_int_array_from_file(file_name):
+
+def plot_function(siec, title, neurons):
+    values = []
+    for i in numpy.arange(-10, 10, 0.01).tolist():
+        values.append(siec.calculate_outputs(i)[1][0][0])
+    plt.plot(numpy.arange(-10, 10, 0.01).tolist(), values)
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
+    plt.tight_layout()
+    plt.show()
+
+
+# funkcja zwraca 2d array floatów w postaci arraya z paczki numpy.
+def read_2d_float_array_from_file(file_name):
     two_dim_list_of_return_values = []
     with open(file_name, "r") as file:
         lines = file.read().splitlines()
     for i in lines:
         one_dim_list = []
-        for j in  list(map(int, i.split())):
+        for j in  list(map(float, i.split())):
             one_dim_list.append(j)
         two_dim_list_of_return_values.append(one_dim_list)
-    return numpy.asarray(two_dim_list_of_return_values).T
+    return numpy.asarray(two_dim_list_of_return_values)
 
 def main():
-    # liczba neuronów w warstwie ukrytej, liczba wyjść, liczba inputów, czy_bias
-    siec = NeuralNetwork(3, 4, 4, False)
-
-    #dane wejściowe, dane wyjściowe, ilość epochów
-    siec.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 10000)
-
+    numpy.random.seed(0)
+    neurons = 7
+    siec = NeuralNetwork(neurons, 1, 1, True)
+    # print(siec)
+    # #dane wejściowe, dane wyjściowe, ilość epochów
+    # print(read_2d_float_array_from_file("approximation_train_1.txt")[:,1])
+    train_file = "approximation_train_1.txt"
+    iterations = 1000
+    siec.train(read_2d_float_array_from_file(train_file)[:,0], read_2d_float_array_from_file(train_file)[:,1], iterations)
+    # print(siec)
     plot_file()
+    counter = 0
+    blad = 0
+    for i in read_2d_float_array_from_file("approximation_test.txt"):
+        blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1])**2)/2
+        # print(siec.calculate_outputs(i[0])[1][0][0], i[1])
+        counter += 1
+    blad = blad / counter
+    plot_function(siec, train_file, neurons)
+    print("BLAD ", blad)
+    # print(siec)
 
-    print("Wynik:")
-    inpuciki = numpy.asarray([1, 0, 0, 0])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = numpy.asarray([0, 1, 0, 0])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = numpy.asarray([0, 0, 1, 0])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
-    inpuciki = numpy.asarray([0, 0, 0, 1])
-    print(inpuciki)
-    print(siec.calculate_outputs(inpuciki)[1])
 
 
 if __name__ == "__main__":
