@@ -5,13 +5,14 @@
 \newcommand{\BibTeX}{{\sc Bib}\TeX} 
 \usepackage{graphicx}
 \usepackage{amsfonts}
+\usepackage{hyperref} 
 
 \setlength{\textheight}{21cm}
 
 \title{{\bf Zadanie nr 1 - Aproksymacja}\linebreak
 Inteligentna analiza danych}
 \author{Przemysław Zdrzalik, 224466 \and Karol Domański 224285}
-\date{07 czerwca 2020 roku}
+\date{07 kwietnia 2020 roku}
 
 \begin{document}
 \clearpage\maketitle
@@ -392,7 +393,15 @@ Błąd na zbiorze testowym = 0.81.
 \newpage
 \section{Wnioski}
 
-Zauważamy, że przeprowadzona przez nas aproksymacja wykorzystująca sieć neuronową jest poprawna. W najlepszych przypadkach otrzymujemy przybliżenia wartości funkcji dla testowanego zbioru o średnim błędzie bliskim 0.02. \\ Zauważamy również, że niskie wartości momentum i współczynniku uczenia oraz duża liczba neuronów daje nam najlepsze rezultaty.\\ Zauważamy, że do odpowiedniego odwzorowania tej funkcji potrzebujemy przynajmniej 7 neuronów, a nauka na większym, pierwszym, zbiorze pozwala lepiej przybliżyć wartości punktów nie należąchych do tego zbioru.
+Zauważamy, że przeprowadzona przez nas aproksymacja wykorzystująca sieć neuronową jest poprawna. Zauważamy, że  błąd średnio kwadratowy sprada 'szybko', aż osiągnie okolice swojego minimum około 200-400 epoki, kiedy to stabilizuje się i zaczyna bardzo powoli maleć. Wtedy też można uznać że sieć jest nauczona.\\W najlepszych przypadkach otrzymujemy przybliżenia wartości funkcji dla testowanego zbioru o średnim błędzie bliskim 0.02. \\ Zauważamy również, że niskie wartości momentum i współczynniku uczenia oraz duża liczba neuronów daje nam najlepsze rezultaty.\\ Zauważamy, że do odpowiedniego odwzorowania tej funkcji potrzebujemy przynajmniej 7 neuronów, a nauka na większym, pierwszym, zbiorze pozwala lepiej aproksymować wartości funkcji oryginalnej jak zadanej w zbiorze testowym, nauka na zbiorze treningowym 2 daje nam wykres funkcji, który mniej pokrywa się z tym oryginalnym niż zbiór treningowy 1.\\ 
+
+\section {Bibliografia}
+[1] \href{https://ftims.edu.p.lodz.pl/pluginfile.php/137799/mod_resource/content/7/perceptron.pdf}{Wzory związane z perceptronem wielowarstwowym}
+\newline
+[2] Bartłomiej Stasiak \href{https://ftims.edu.p.lodz.pl/pluginfile.php/137980/mod_resource/content/1/3.pdf}{Sztuczne sieci neuronowe}
+\newline
+[3] Bartłomiej Stasiak \href{https://ftims.edu.p.lodz.pl/pluginfile.php/137981/mod_resource/content/2/4.pdf}{Jednokierunkowe wielowarstwowe sieci neuronowe}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

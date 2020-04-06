@@ -6,13 +6,15 @@
 \usepackage{graphicx}
 \usepackage{amsfonts}
 \usepackage{multirow}
+\usepackage{hyperref} 
+
 
 \setlength{\textheight}{21cm}
 
 \title{{\bf Zadanie nr 1 - Klasyfikacja}\linebreak
 Inteligentna analiza danych}
 \author{Przemysław Zdrzalik, 224466 \and Karol Domański 224285}
-\date{07 czerwca 2020 roku}
+\date{07 kwietnia 2020 roku}
 
 \begin{document}
 \clearpage\maketitle
@@ -960,7 +962,15 @@ Klasa 3 - Precision = 27/29, Recall = 27/31\\
 \newpage
 \section {Wnioski}
 
-Zgodnie z naszymi oczekiwaniami najlepszy wynik otrzymalismy dla 4 wejść i dużej ilości neuronów. Mimo to zaskoczyło nas jak dobrze sieć potrafi sobie poradzić przy niskiej ilości neuronów i wejść, jeżeli dobrze dobierzemy dane wejściowe. Okazuje się że najlepszymi danymi są te znajdujące się w 3 i 4 kolumnie danych treningowych, pozwoliły nam one najlepiej odszyfrować klasy obiektów, nawet przy 1 wejściu i niskiej ilości neuronów.\\ Dla większości kombinacji siec potrzebowała około 200 epok do nauki. Po tym okresie wartości błędu średniokwadratowego i ilość poprawnie rozpoznanych obiektów nie zmieniały się już o zauważalne ilości.
+Zgodnie z naszymi oczekiwaniami najlepszy wynik otrzymalismy dla 4 wejść i dużej ilości neuronów. Mimo to zaskoczyło nas jak dobrze sieć potrafi sobie poradzić przy niskiej ilości neuronów i wejść, jeżeli dobrze dobierzemy dane wejściowe. Okazuje się że najlepszymi danymi są te znajdujące się w 3 i 4 kolumnie danych treningowych, pozwoliły nam one najlepiej odszyfrować klasy obiektów, nawet przy 1 wejściu i niskiej ilości neuronów.\\ Dla większości kombinacji siec potrzebowała około 200 epok do nauki. Po tym okresie wartości błędu średniokwadratowego i ilość poprawnie rozpoznanych obiektów nie zmieniały się już o zauważalne ilość.\\Wydaje się, że parametry nauki takie jak współczynnik uczenia i momentum nie mają dużego wpływu na tempo uczenia ani jakość nauki sieci. Testowane przez nas wartości nie pokazały zauważalnej zmiany w nauce sieci.
+
+\section {Bibliografia}
+
+[1] \href{https://ftims.edu.p.lodz.pl/pluginfile.php/137799/mod_resource/content/7/perceptron.pdf}{Wzory związane z perceptronem wielowarstwowym}
+\newline
+[2] Bartłomiej Stasiak \href{https://ftims.edu.p.lodz.pl/pluginfile.php/137980/mod_resource/content/1/3.pdf}{Sztuczne sieci neuronowe}
+\newline
+[3] Bartłomiej Stasiak \href{https://ftims.edu.p.lodz.pl/pluginfile.php/137981/mod_resource/content/2/4.pdf}{Jednokierunkowe wielowarstwowe sieci neuronowe}
 
 
 
