@@ -5,9 +5,9 @@ import time
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.2
+eta = 0.1
 # momentum
-alfa = 0
+alfa = 0.1
 
 
 class NeuralNetwork:
@@ -178,7 +178,7 @@ def read_2d_float_array_from_file(file_name):
 
 def main():
     numpy.random.seed(0)
-    neurons = 7
+    neurons = 20
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, 1, True)
     train_file = "approximation_train_1.txt"

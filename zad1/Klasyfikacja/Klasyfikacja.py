@@ -258,7 +258,6 @@ def main():
     all_3 = [0, 0, 0]
     it = 0
     for i in read_2d_float_array_from_file("classification_test.txt")[:, 3:]:
-        print(i)
         obliczone = numpy.argmax(siec.calculate_outputs(i[:-1])[1], axis=0)
         if i[-1:] == 1:
             all_1[obliczone] += 1
