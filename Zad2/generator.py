@@ -57,6 +57,11 @@ def generate_polygon():
 
 def generate_points():
     poly = generate_polygon()
+    poly_vertices = []
+    for i, j in zip(poly.exterior.coords.xy[0], poly.exterior.coords.xy[1]):
+        poly_vertices.append([i, j])
+    # TODO: nie jestem fanem tego ale jakby to nie musi być cudo xD
+    write_points_to_file("wierzcholki_wielokata.txt", poly_vertices, True)
     amount_points = choose_num_points()
     points = []
     for i in range(amount_points):
@@ -72,15 +77,24 @@ def get_random_point_in_polygon(poly):
             return p
 
 
-def write_points_to_file(file_name):
+def write_points_to_file_and_generate(file_name):
     points = generate_points()
-    with open(file_name, 'w') as file:
-        for i in points:
-            file.write(str(i.x) + " " + str(i.y) + "\n")
+    write_points_to_file(file_name, points)
+
+
+def write_points_to_file(file_name, points, is_polygon_vertices_list = False):
+    if not is_polygon_vertices_list:
+        with open(file_name, 'w') as file:
+            for i in points:
+                file.write(str(i.x) + " " + str(i.y) + "\n")
+    else:
+        with open(file_name, 'w') as file:
+            for i in points[:-1]:
+                file.write(str(i[0]) + " " + str(i[1]) + "\n")
 
 
 def main():
-    write_points_to_file("plik.txt")
+    write_points_to_file_and_generate("punkty.txt")
 
 
 if __name__ == '__main__':
