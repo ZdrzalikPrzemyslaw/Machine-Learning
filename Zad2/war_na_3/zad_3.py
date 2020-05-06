@@ -19,6 +19,7 @@ pomysl:
     no i w sumie tyle XD 
 """
 
+
 # TODO:
 #   Pokonać problem martwych neuronów
 #   dodać drugi tryb działania (Gauss)
@@ -46,6 +47,7 @@ class Kohonen:
     # TODO: poprawic, aktualnie zmienia tylko w promieniu
     def epoch(self):
         np.random.shuffle(self.input_matrix)
+        counter = 0
         for i in self.input_matrix:
             if not self.is_gauss:
                 self.distance_map_fill(i)
@@ -54,7 +56,18 @@ class Kohonen:
                     if distance.euclidean(self.map[j], self.map[smallest_index]) <= self.distance_still_change:
                         self.map[j] = self.map[j] + self.alfa * (i - self.map[j])
             else:
-                pass
+                self.distance_map_fill(i)
+                smallest_index = np.argmin(self.distance_map)
+                for j in range(len(self.map)):
+                    self.map[j] = self.map[j] + self.alfa \
+                                  * self.euclidean_func(self.map[smallest_index], self.map[j]) * (i - self.map[j])
+            counter += 1
+
+            if counter % 100 == 0:
+                print("Iteration in epoch nr", counter)
+
+    def euclidean_func(self, pos_closest, pos_checked):
+        return np.exp(-distance.euclidean(pos_checked, pos_closest) ** 2 / (2 * (self.distance_still_change ** 2)))
 
     def distance_map_fill(self, point):
         # TODO zmien nazwe zmiennej
@@ -99,7 +112,7 @@ def plot(list2d, list2d2=None):
 
 
 def main():
-    kohonen = Kohonen(read_2d_float_array_from_file("Danetestowe.txt", is_comma=True), 300, False)
+    kohonen = Kohonen(read_2d_float_array_from_file("Danetestowe.txt", is_comma=True), 100, True)
     plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen.epoch()
     plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
