@@ -94,7 +94,12 @@ class NeuralNetwork:
                 output_delta = output_error * self.sigmoid_fun_deriative(output_layer_output)
 
                 # korzystamy z wcześniej otrzymanego współczynniku błędu aby wyznaczyć błąd dla warstwy ukrytej
+                print(output_delta)
+                print(self.output_layer)
+                print(output_delta.T)
                 hidden_layer_error = output_delta.T.dot(self.output_layer)
+                print(hidden_layer_error)
+                exit(1)
                 # jak dla warstwy wyjściowej hidden_layer_delta jest jeden dla każdego neuronu i
                 # aby wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
                 hidden_layer_delta = hidden_layer_error * self.sigmoid_fun_deriative(hidden_layer_output)

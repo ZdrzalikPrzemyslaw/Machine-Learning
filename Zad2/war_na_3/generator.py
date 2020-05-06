@@ -2,6 +2,7 @@ import random
 
 from shapely import geometry
 
+
 def choose_num_polygon_vertex():
     i = -1
     while i <= 2:

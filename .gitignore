@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# moje
+*.idea/
+PlotnijSe.py
+wierzcholki_wielokata.txt
+punkty.txt

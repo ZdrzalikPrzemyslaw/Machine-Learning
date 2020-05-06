@@ -4,9 +4,9 @@ import time
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.1
+eta = 0.2
 # momentum
-alfa = 0.7
+alfa = 0.1
 
 
 class NeuralNetwork:
@@ -26,11 +26,13 @@ class NeuralNetwork:
         # czy uruchomilismy bias
         self.is_bias = is_bias
         # warstwy ukryta i wyjściowa oraz odpowiadające im struktury zapisujące zmianę wagi w poprzedniej iteracji, używane do momentum
+        # wagi inicjalizujemy liczbami w przedziale -1 do 1
         self.hidden_layer = (2 * numpy.random.random((number_of_inputs, number_of_neurons_hidden_layer)).T - 1)
         self.delta_weights_hidden_layer = numpy.zeros((number_of_inputs, number_of_neurons_hidden_layer)).T
         self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)).T - 1
         self.delta_weights_output_layer = numpy.zeros((number_of_neurons_hidden_layer, number_of_neurons_output)).T
         # jesli wybralismy że bias ma byc to tworzymy dla każdej warstwy wektor wag biasu
+        # 1 bias na 1 neuron w każdej warstwie
         if is_bias:
             self.bias_hidden_layer = (2 * numpy.random.random(number_of_neurons_hidden_layer) - 1)
             self.bias_output_layer = (2 * numpy.random.random(number_of_neurons_output) - 1)
@@ -42,7 +44,7 @@ class NeuralNetwork:
         self.bias_output_layer_delta = numpy.zeros(number_of_neurons_output)
         self.bias_hidden_layer_delta = numpy.zeros(number_of_neurons_hidden_layer)
 
-    # Wzór funkcji
+    # Funckja sigmoidalna
     def sigmoid_fun(self, inputcik):
         return 1 / (1 + numpy.exp(-inputcik))
 
@@ -51,51 +53,69 @@ class NeuralNetwork:
     # def sigmoid_fun_deriative(self, inputcik):
     #     return numpy.exp(-inputcik) /  ((numpy.exp(-inputcik) + 1) ** 2)
 
+    # pochodna funkcji sigmoidalnej
     def sigmoid_fun_deriative(self, inputcik):
         return inputcik * (1 - inputcik)
 
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     def calculate_outputs(self, inputs):
-
+        # wynik dla neuronu to suma wyników wejść i odpowiednich wag + bias tego neuronu i od tego liczymy wartość funkcji aktywacji
         hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) + self.bias_hidden_layer)
         output_layer_output = self.sigmoid_fun(
             numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer)
-
         return hidden_layer_output, output_layer_output
 
     # trening, tyle razy ile podamy epochów
     # dla każdego epochu shufflujemy nasze macierze i przechodzimy przez nie po każdym wierszu z osobna
     def train(self, inputs, expected_outputs, epoch_count):
+        # tutaj sa wszystkie błędy w każdej iteracji
         error_list = []
+        # lista tego ile w danej iteracji przyporządkowaliśmy dobrze:
+        # wszystkiego, klasy 0, klasy 1, klasy 2.
         correct_list = []
         correct_0_list = []
         correct_1_list = []
         correct_2_list = []
+        # łaczymy wejścia i oczekiwane wyjścia żeby móc zrobić ładne losowanie
         joined_arrays = numpy.vstack((inputs.T, expected_outputs.T)).T
         for it in range(epoch_count):
 
-            # Shuffle once each iteration
+            # Losujemy kolejność : D
             numpy.random.shuffle(joined_arrays)
+            # dzielimy na 2 macierze, wejść i oczekiwanych wyjść
             joined_arrays_left = joined_arrays[:, :-1]
             joined_arrays_right = joined_arrays[:, -1:]
-            correct_amount = 0
+            # ile danej klasy było ogólnie w przejściu
             correct_0_amount = 0
             correct_1_amount = 0
             correct_2_amount = 0
+            # ile dobrze przy danej iteracji
+            correct_all = 0
             correct_0 = 0
             correct_1 = 0
             correct_2 = 0
+            # błąd średniokwadratowy
             mean_squared_error = 0
+            # iteracja w danej epoce
             ite = 0
 
             for k, j in zip(joined_arrays_left, joined_arrays_right):
 
+                # wyliczamy wyjścia z obu warstw
                 hidden_layer_output, output_layer_output = self.calculate_outputs(k)
 
-                # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
-
                 # SPAGHETTI CODE HERE
+                # generalnie to można było zrobić tyle razy lepiej ale jest tak
+                # sieć ma 3 wyjscia,
+                # tam gdzie otrzymamy największą wartość uznajemy że tak sieć zklasyfikowała obiekt
+                # klasy mamy podane jako liczbę (1, 2, 3)
+                # w bardzo karkołomny sposób przechodzimy z tej liczby na '1'
+                # na odpowiadającym temu co ma wyjśc z sieci miejscu
+                # tzn jeśli klasa jest 3, to sieć wyprodukuje największa wartość na wyjściu nr 3
+                # więc otrzymamy wektor wyników [~0, ~0, ~1]
+                # więc by policzyć odpowiedni błąd oczekiwane wyniki muszą być w formacie
+                # [0, 0, 1] i tak jest.
                 old_j = j
                 if j == 1:
                     j = numpy.asarray([1, 0, 0])
@@ -107,14 +127,16 @@ class NeuralNetwork:
                     j = numpy.asarray([0, 0, 1])
                     correct_2_amount += 1
                 if numpy.argmax(j, axis=0) == numpy.argmax(output_layer_output, axis=0):
-                    correct_amount += 1
+                    correct_all += 1
                     if old_j == 1:
                         correct_0 += 1
                     if old_j == 2:
                         correct_1 += 1
                     if old_j == 3:
                         correct_2 += 1
+                # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
                 output_error = output_layer_output - j
+                # suma kwadratów
                 mean_squared_error += output_error.dot(output_error) / 2
                 ite += 1
 
@@ -129,6 +151,7 @@ class NeuralNetwork:
                 # aby wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
                 hidden_layer_delta = hidden_layer_error * self.sigmoid_fun_deriative(hidden_layer_output)
 
+                # wyznaczamy obliczony 'współczynnik' przez odpowiednie wagi w warstwach by wyznaczyć zmianę dla danej wagi
                 output_layer_adjustment = []
                 for i in output_delta:
                     output_layer_adjustment.append(hidden_layer_output * i)
@@ -162,7 +185,7 @@ class NeuralNetwork:
 
             mean_squared_error = mean_squared_error / ite
             error_list.append(mean_squared_error)
-            correct_list.append(correct_amount / ite)
+            correct_list.append(correct_all / ite)
             correct_0_list.append(correct_0 / correct_0_amount)
             correct_1_list.append(correct_1 / correct_1_amount)
             correct_2_list.append(correct_2 / correct_2_amount)
@@ -244,20 +267,22 @@ def read_2d_float_array_from_file(file_name):
 def main():
     numpy.random.seed(0)
 
-    # neurony, wyjścia, wejścia, bias
-    siec = NeuralNetwork(5, 3, 1, True)
-
-    siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt")[:, 3:5], 1, 1),
+    # neurony w warstwie ukrytej, wyjścia, wejścia, bias
+    siec = NeuralNetwork(10, 3, 4, True)
+    print(siec)
+    # dane wejściowe, dane wyjściowe, ilość iteracji
+    siec.train(read_2d_float_array_from_file("classification_train.txt")[:, :-1],
                read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
 
     plot_file()
     plot_file("correct_assigment.txt")
+    # sprawdzenie dla zbioru testowego
     correct_amount = 0
     all_1 = [0, 0, 0]
     all_2 = [0, 0, 0]
     all_3 = [0, 0, 0]
     it = 0
-    for i in read_2d_float_array_from_file("classification_test.txt")[:, 3:]:
+    for i in read_2d_float_array_from_file("classification_test.txt")[:, :]:
         obliczone = numpy.argmax(siec.calculate_outputs(i[:-1])[1], axis=0)
         if i[-1:] == 1:
             all_1[obliczone] += 1
