@@ -31,7 +31,7 @@ pomysl:
 
 
 class Kohonen:
-    def __init__(self, input_matrix, neuron_num, is_gauss, alfa=0.1, distance_still_change=0.2):
+    def __init__(self, input_matrix, neuron_num, is_gauss, alfa=0.1, distance_still_change=1):
         self.neuron_num = neuron_num
         self.input_matrix = input_matrix
         self.is_gauss = is_gauss
@@ -60,13 +60,14 @@ class Kohonen:
                 smallest_index = np.argmin(self.distance_map)
                 for j in range(len(self.map)):
                     self.map[j] = self.map[j] + self.alfa \
-                                  * self.euclidean_func(self.map[smallest_index], self.map[j]) * (i - self.map[j])
+                        * self.euclidean_func(self.map[smallest_index], self.map[j]) * (i - self.map[j])
             counter += 1
 
             if counter % 100 == 0:
                 print("Iteration in epoch nr", counter)
 
     def euclidean_func(self, pos_closest, pos_checked):
+        # TODO: nie wiem w jakim zakresie dac ten self.distance_sill_change ktory wgl trzeba inaczej nazwac
         return np.exp(-distance.euclidean(pos_checked, pos_closest) ** 2 / (2 * (self.distance_still_change ** 2)))
 
     def distance_map_fill(self, point):
