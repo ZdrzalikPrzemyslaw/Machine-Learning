@@ -19,9 +19,18 @@ pomysl:
     no i w sumie tyle XD 
 """
 
+# TODO:
+#   Pokonać problem martwych neuronów
+#   dodać drugi tryb działania (Gauss)
+#   dodać drugi algorytm (gaz neuronowy)
+#   dodać błąd kwantyzacji
+#   dodać zmianę parametru alfa
+#   przeczytać uważnie całą prezentację
+#   promień sąsiedztwa też ma maleć wraz z postępowaniem adaptacji
+
 
 class Kohonen:
-    def __init__(self, input_matrix, neuron_num, is_gauss):
+    def __init__(self, input_matrix, neuron_num, is_gauss, alfa=0.1, distance_still_change=0.2):
         self.neuron_num = neuron_num
         self.input_matrix = input_matrix
         self.is_gauss = is_gauss
@@ -29,20 +38,26 @@ class Kohonen:
         self.map = np.random.normal(np.mean(input_matrix), np.std(input_matrix),
                                     size=(self.neuron_num, len(input_matrix[0])))
         self.distance_map = np.zeros_like(self.map)
-        self.alfa = 0.1
-        self.distance_still_change = 0.2
+        # poczatkowy wspolczynnik tego przesuwania XD nie wiem jak to nazwać, chce spac
+        self.alfa = alfa
+        # odleglosc dla tej metody, gdzie sie ma zmieniac tylko punkt i pobliskie. Trzeba zrobic to lepiej
+        self.distance_still_change = distance_still_change
 
-    # TODO: poprawic, aktualnie zmienia najblizszy
+    # TODO: poprawic, aktualnie zmienia tylko w promieniu
     def epoch(self):
         np.random.shuffle(self.input_matrix)
         for i in self.input_matrix:
-            self.distance_map_fill(i)
-            smallest_index = np.argmin(self.distance_map)
-            for j in range(len(self.map)):
-                if distance.euclidean(self.map[j], self.map[smallest_index]) <= self.distance_still_change:
-                    self.map[j] = self.map[j] + self.alfa * (i - self.map[j])
+            if not self.is_gauss:
+                self.distance_map_fill(i)
+                smallest_index = np.argmin(self.distance_map)
+                for j in range(len(self.map)):
+                    if distance.euclidean(self.map[j], self.map[smallest_index]) <= self.distance_still_change:
+                        self.map[j] = self.map[j] + self.alfa * (i - self.map[j])
+            else:
+                pass
 
     def distance_map_fill(self, point):
+        # TODO zmien nazwe zmiennej
         potezna_lista = []
         for i in self.map:
             potezna_lista.append(distance.euclidean(i, point))
@@ -84,7 +99,7 @@ def plot(list2d, list2d2=None):
 
 
 def main():
-    kohonen = Kohonen(read_2d_float_array_from_file("Danetestowe.txt", is_comma=True), 300, True)
+    kohonen = Kohonen(read_2d_float_array_from_file("Danetestowe.txt", is_comma=True), 300, False)
     plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen.epoch()
     plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
