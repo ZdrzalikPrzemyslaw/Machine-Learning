@@ -22,31 +22,42 @@ pomysl:
 
 # TODO:
 #   Pokonać problem martwych neuronów
-#   dodać błąd kwantyzacji
 #   przeczytać uważnie całą prezentację
 
-
 class Kohonen:
-    def __init__(self, input_matrix, neuron_num, is_neural_gas=False, is_gauss=True, alfa=0.6, neighbourhood_radius=0.5, epoch_count=1):
+    # alfa - wpsolczynnik uczenia, neighbourhood_radius - to co we wzorach jest opisane lambda
+    # dla kazdej metody to nieco inne jest ale generalnie uzywane w liczeniu tego G(i, x) co jest we wzorach
+
+    def __init__(self, input_matrix, neuron_num, is_neural_gas=False,
+                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.5, epoch_count=1):
         self.neuron_num = neuron_num
         self.input_matrix = input_matrix
+
         self.is_gauss = is_gauss
-        self.epoch_nr = 0
+        self.is_neural_gas = is_neural_gas
+
         self.epoch_count = epoch_count
+
+
+
         self.map = np.random.normal(np.mean(input_matrix), np.std(input_matrix),
                                     size=(self.neuron_num, len(input_matrix[0])))
         self.distance_map = np.zeros_like(self.map)
-        # poczatkowy wspolczynnik tego przesuwania XD nie wiem jak to nazwać, chce spac
+
         self.max_alfa = alfa
         self.min_alfa = 0.01
         self.current_alfa = self.max_alfa
-        # Odleglosc od punktu zwycięskiego lub mianownik w drugiej metodzie
+
         self.neighbourhood_radius_max = neighbourhood_radius
         self.current_neighbourhood_radius = self.neighbourhood_radius_max
         self.neighbourhood_radius_min = 0.01
-        self.current_step = 1
-        self.max_step = len(self.input_matrix) / len(self.input_matrix[0]) * self.epoch_count
-        self.is_neural_gas = is_neural_gas
+
+        self.num_rows_input_data, self.num_cols_input_data = self.input_matrix.shape
+
+        self.current_step = 0
+        self.max_step = self.num_rows_input_data * self.epoch_count
+
+        self.quantization_error_list = []
 
     # TODO: poprawic, aktualnie zmienia tylko w promieniu
     def epoch(self):
@@ -59,7 +70,8 @@ class Kohonen:
                     self.distance_map_fill(i)
                     smallest_index = np.argmin(self.distance_map)
                     for j in range(len(self.map)):
-                        if distance.euclidean(self.map[j], self.map[smallest_index]) <= self.current_neighbourhood_radius:
+                        if distance.euclidean(self.map[j],
+                                              self.map[smallest_index]) <= self.current_neighbourhood_radius:
                             self.map[j] = self.map[j] + self.current_alfa * (i - self.map[j])
 
                 else:
@@ -83,7 +95,8 @@ class Kohonen:
                 distance_ranking = np.argsort(self.distance_map)
                 for j in range(len(distance_ranking)):
                     self.map[distance_ranking[j]] = self.map[distance_ranking[j]] \
-                            + self.current_alfa * self.neural_gass_neighbour_fun(j) * (i - self.map[distance_ranking[j]])
+                                                    + self.current_alfa * self.neural_gass_neighbour_fun(j) * (
+                                                                i - self.map[distance_ranking[j]])
 
                 self.current_step += 1
                 if self.current_step % 100 == 0:
@@ -108,7 +121,19 @@ class Kohonen:
 
     def train(self):
         for i in range(self.epoch_count):
+            self.calculate_quantization_error()
+            print("current_quant_error = ", self.quantization_error_list[i])
             self.epoch()
+        self.calculate_quantization_error()
+        print("current_quant_error = ", self.quantization_error_list[-1])
+
+    def calculate_quantization_error(self):
+        __sum = 0
+        for i in self.input_matrix:
+            self.distance_map_fill(i)
+            smallest_index = np.argmin(self.distance_map)
+            __sum += (self.distance_map[smallest_index]) ** 2
+        self.quantization_error_list.append(__sum / self.num_rows_input_data)
 
     def distance_map_fill(self, point):
         # TODO zmien nazwe zmiennej
