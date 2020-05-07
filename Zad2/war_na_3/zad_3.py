@@ -23,6 +23,7 @@ pomysl:
 # TODO:
 #   Pokonać problem martwych neuronów
 #   przeczytać uważnie całą prezentację
+#   dodac animacje
 
 class Kohonen:
     # alfa - wpsolczynnik uczenia, neighbourhood_radius - to co we wzorach jest opisane lambda
