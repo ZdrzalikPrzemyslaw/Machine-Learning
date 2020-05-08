@@ -1,10 +1,11 @@
 import numpy as np
-import matplotlib; matplotlib.use("TkAgg")
+import matplotlib;
+
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import interp1d
 from scipy.spatial import distance
-
 
 
 # wagi - współrzędne punktu
@@ -12,7 +13,6 @@ from scipy.spatial import distance
 # TODO:
 #   Pokonać problem martwych neuronów
 #   przeczytać uważnie całą prezentację
-#   dodac animacje
 
 class KohonenOrNeuralGas:
     # alfa - wpsolczynnik uczenia, neighbourhood_radius - to co we wzorach jest opisane lambda
@@ -115,6 +115,8 @@ class KohonenOrNeuralGas:
                 self.current_step += 1
                 if self.current_step % 100 == 0:
                     print("Currently ", (self.current_step * 100) / self.max_step, "% done")
+
+        self.animation_list.append(np.copy(self.map))
 
     # dla gazu neuronowego zwraca współczynnik związany z rankingiem punktu
     def neural_gass_neighbour_fun(self, ranking):
@@ -224,7 +226,7 @@ def main():
     # kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt"), neuron_num=300,
-                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.1)
+                                 is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=5)
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
