@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib;
 
-matplotlib.use("TkAgg")
+# matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import interp1d
@@ -49,9 +49,11 @@ class KohonenOrNeuralGas:
         self.num_rows_input_data, self.num_cols_input_data = self.input_matrix.shape
 
         # tutaj pozniej przechowujemy odleglosci odpowiednich neuronów od aktualnie rozpatrywanego wektoru wejściowego
-        self.distance_map = np.zeros(self.num_rows_input_data)
-        # potencjaly do matwych neuronów-
-        self.potentials = np.ones(self.num_rows_input_data)
+        self.distance_map = np.zeros(neuron_num)
+        # potencjaly do matwych neuronów
+        # ustawiamy na 0 to mamy dzialanie jak wczesniej
+        # TODO: TO NIE POMAGA A WRECZ PRZESZKADZA XD CO ZA GÓWNO A JUŻ MI SIĘ TO ZADANIE PODOBALO
+        self.potentials = np.ones(neuron_num)
         self.min_potential = min_potential
 
         # aktualny krok i maksymalna liczba kroków (liczba rzędów w wejsciu razy liczba epok)
@@ -78,23 +80,33 @@ class KohonenOrNeuralGas:
                 # modyfikacja zwyciezcy oraz znajdujących się o self.current_neighbourhood_radius od niego neuronów
                 if not self.is_gauss:
                     self.distance_map_fill(i)
-                    smallest_index = np.argmin(self.distance_map)
-                    for j in range(len(self.map)):
-
+                    map_not_sleeping, distance_map_not_sleeping, true_index = \
+                        self.get_not_sleeping_neurons_and_distances()
+                    self.change_potentials(true_index[np.argmax(distance_map_not_sleeping)])
+                    smallest_index = np.argmin(distance_map_not_sleeping)
+                    for j in range(len(map_not_sleeping)):
                         # sprawdzamy czy odległość neuronu od zwycięzcy jest mniejsza niż current_neighbourhood_radius
                         # jesli tak to modyfikujemy zgodnie ze wzorem
-                        if distance.euclidean(self.map[j],
-                                              self.map[smallest_index]) <= self.current_neighbourhood_radius:
-                            self.map[j] = self.map[j] + self.current_alfa * (i - self.map[j])
+                        if distance.euclidean(map_not_sleeping[j],
+                                              map_not_sleeping[smallest_index]) <= self.current_neighbourhood_radius:
+                            map_not_sleeping[j] = map_not_sleeping[j] + self.current_alfa * (i - map_not_sleeping[j])
+                    for j in range(len(map_not_sleeping)):
+                        self.map[true_index[j]] = map_not_sleeping[j]
 
                 # wariant gaussa
                 # modyfikacja zwycięzcy oraz wszystkich innych w zależności od ich odległości od zwycięzcy
                 else:
                     self.distance_map_fill(i)
-                    smallest_index = np.argmin(self.distance_map)
-                    for j in range(len(self.map)):
-                        self.map[j] = self.map[j] + self.current_alfa \
-                                      * self.euclidean_func(self.map[smallest_index], self.map[j]) * (i - self.map[j])
+                    map_not_sleeping, distance_map_not_sleeping, true_index = \
+                        self.get_not_sleeping_neurons_and_distances()
+                    self.change_potentials(true_index[np.argmax(distance_map_not_sleeping)])
+                    smallest_index = np.argmin(distance_map_not_sleeping)
+                    for j in range(len(map_not_sleeping)):
+                        map_not_sleeping[j] = map_not_sleeping[j] + self.current_alfa \
+                                      * self.euclidean_func(self.map[smallest_index], self.map[j]) * (i - map_not_sleeping[j])
+
+                    for j in range(len(map_not_sleeping)):
+                        self.map[true_index[j]] = map_not_sleeping[j]
 
                 self.current_step += 1
                 if self.current_step % 100 == 0:
@@ -108,27 +120,43 @@ class KohonenOrNeuralGas:
                 self.change_alpha()
                 self.change_neighbourhood_radius()
                 self.distance_map_fill(i)
-                distance_ranking = np.argsort(self.distance_map)
+                map_not_sleeping, distance_map_not_sleeping, true_index = self.get_not_sleeping_neurons_and_distances()
+                distance_ranking = np.argsort(distance_map_not_sleeping)
+                self.change_potentials(true_index[np.argmax(distance_map_not_sleeping)])
                 self.animation_list.append(np.copy(self.map))
                 for j in range(len(distance_ranking)):
-                    self.map[distance_ranking[j]] = self.map[distance_ranking[j]] \
-                                                    + self.current_alfa * self.neural_gass_neighbour_fun(j) * (
-                                                            i - self.map[distance_ranking[j]])
+                    map_not_sleeping[distance_ranking[j]] = map_not_sleeping[distance_ranking[j]] \
+                                                            + self.current_alfa * self.neural_gass_neighbour_fun(j) * (
+                                                                    i - map_not_sleeping[distance_ranking[j]])
+                for j in range(len(map_not_sleeping)):
+                    self.map[true_index[j]] = map_not_sleeping[j]
 
                 self.current_step += 1
                 if self.current_step % 100 == 0:
                     print("Currently ", (self.current_step * 100) / self.max_step, "% done")
+                    # counter = 0
+                    # for i in self.potentials:
+                    #     if i > self.min_potential:
+                    #         counter += 1
+                    # print(counter)
 
         self.animation_list.append(np.copy(self.map))
+
+    def change_potentials(self, index):
+        self.potentials += 1 / len(self.potentials)
+        self.potentials[index] -= 1 / len(self.potentials)
+        self.potentials[index] -= self.min_potential
 
     def get_not_sleeping_neurons_and_distances(self):
         neuron_list = []
         distance_list = []
+        true_index_list = []
         for i in range(len(self.map)):
-            if self.potentials[i] > self.min_potential:
+            if self.potentials[i] >= self.min_potential:
                 neuron_list.append(self.map[i])
                 distance_list.append(self.distance_map[i])
-        return np.asarray(neuron_list), np.asarray(distance_list)
+                true_index_list.append(i)
+        return np.asarray(neuron_list), np.asarray(distance_list), np.asarray(true_index_list)
 
     # dla gazu neuronowego zwraca współczynnik związany z rankingiem punktu
     def neural_gass_neighbour_fun(self, ranking):
@@ -236,11 +264,14 @@ def main():
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     # kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True), neuron_num=300,
-                                 is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=3)
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt", is_comma=False),
+                                 neuron_num=300,
+                                 is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=2,
+                                 min_potential=0.75)
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+
     kohonen.animate_training()
 
 
