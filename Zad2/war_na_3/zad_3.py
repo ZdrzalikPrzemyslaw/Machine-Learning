@@ -1,6 +1,10 @@
-from matplotlib import pyplot as plt
 import numpy as np
+import matplotlib; matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from scipy.interpolate import interp1d
 from scipy.spatial import distance
+
 
 
 # wagi - współrzędne punktu
@@ -10,12 +14,12 @@ from scipy.spatial import distance
 #   przeczytać uważnie całą prezentację
 #   dodac animacje
 
-class Kohonen_or_neural_gas:
+class KohonenOrNeuralGas:
     # alfa - wpsolczynnik uczenia, neighbourhood_radius - to co we wzorach jest opisane lambda
     # dla kazdej metody to nieco inne jest ale generalnie uzywane w liczeniu tego G(i, x) co jest we wzorach
 
     def __init__(self, input_matrix, neuron_num, is_neural_gas=False,
-                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.5, epoch_count=1):
+                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.3, epoch_count=1):
         # liczba neuronów i dane wejsciowe
         self.neuron_num = neuron_num
         self.input_matrix = input_matrix
@@ -54,6 +58,8 @@ class Kohonen_or_neural_gas:
         # tutaj przechowujemy błędy liczone po każdej epoce (bardzo wolno liczy się błąd)
         self.quantization_error_list = []
 
+        self.animation_list = []
+
     # jedna epoka
     def epoch(self):
         np.random.shuffle(self.input_matrix)
@@ -61,6 +67,8 @@ class Kohonen_or_neural_gas:
             for i in self.input_matrix:
                 self.change_alpha()
                 self.change_neighbourhood_radius()
+                # print(self.animation_list)
+                self.animation_list.append(np.copy(self.map))
 
                 # klasyczny wariant Kohenena,
                 # modyfikacja zwyciezcy oraz znajdujących się o self.current_neighbourhood_radius od niego neuronów
@@ -97,6 +105,7 @@ class Kohonen_or_neural_gas:
                 self.change_neighbourhood_radius()
                 self.distance_map_fill(i)
                 distance_ranking = np.argsort(self.distance_map)
+                self.animation_list.append(np.copy(self.map))
                 for j in range(len(distance_ranking)):
                     self.map[distance_ranking[j]] = self.map[distance_ranking[j]] \
                                                     + self.current_alfa * self.neural_gass_neighbour_fun(j) * (
@@ -153,6 +162,37 @@ class Kohonen_or_neural_gas:
             potezna_lista.append(distance.euclidean(i, point))
         self.distance_map = np.asarray(potezna_lista)
 
+    def animate_training(self):
+        fig, ax = plt.subplots()
+
+        ax.axis([np.min(self.animation_list[0], axis=0)[0] - 1, np.max(self.animation_list[0], axis=0)[0] + 1,
+                 np.min(self.animation_list[0], axis=0)[1] - 1, np.max(self.animation_list[0], axis=0)[1] + 1])
+
+        ax.plot(self.input_matrix[:, 0], self.input_matrix[:, 1], 'ro')
+        l, = ax.plot([], [], 'bo')
+
+        def animate(i):
+            if i > len(self.animation_list) - 1:
+                i = len(self.animation_list) - 1
+            # print(i)
+            # print(self.animation_list[i + 1] - self.animation_list[i])
+            l.set_data(self.animation_list[i][:, 0], self.animation_list[i][:, 1])
+            return l,
+
+        ani = animation.FuncAnimation(fig, animate, interval=100, repeat=False)
+        plt.show()
+        # fig = plt.figure()
+        #
+        #
+        # def animate(i):
+        #     # graph.set_data(self.animation_list[i][:, 0], self.animation_list[i][:, 1])
+        #     # graph.set_offsets(np.vstack((self.animation_list[i][:, 0], self.animation_list[i][:, 1])).T)
+        #     graph = plt.plot(self.animation_list[0][:, 0], self.animation_list[0][:, 1])
+        #     return graph
+        #
+        # ani = animation.FuncAnimation(fig, animate, repeat=False, interval=200)
+        # plt.show()
+
 
 def read_2d_float_array_from_file(file_name, is_comma=False):
     two_dim_list_of_return_values = []
@@ -176,7 +216,7 @@ def plot(list2d, list2d2=None):
     list2 = []
     list3 = []
     list4 = []
-    if not list2d2 is None:
+    if list2d2 is not None:
         for i in list2d2:
             list3.append(i[0])
             list4.append(i[1])
@@ -189,15 +229,17 @@ def plot(list2d, list2d2=None):
 
 
 def main():
-    kohonen = Kohonen_or_neural_gas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
-                                    neuron_num=200, is_neural_gas=True, epoch_count=1)
-    plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
+    # kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
+    #                                 neuron_num=200, is_neural_gas=True, epoch_count=1)
+    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
+    # kohonen.train()
+    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt"), neuron_num=300,
+                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=1)
+    plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.train()
-    plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-    # kohonen = Kohonen(read_2d_float_array_from_file("punkty.txt", is_comma=False), 1000, True)
-    # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
-    # kohonen.epoch()
-    # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+    plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+    kohonen.animate_training()
 
 
 if __name__ == '__main__':
