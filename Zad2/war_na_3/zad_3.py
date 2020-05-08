@@ -99,7 +99,6 @@ class KohonenOrNeuralGas:
         # metoda gazu neuronowego
         # sortujemy neurony wg odległości od aktualnego wektoru wejścia
         # liczymy zmianę pozycji w zależności od pozycji w rankingu a nie od faktycznej odległosci
-        # TODO: nie podoba mi sie to co mi pokazuje animacja, że zmienia sie jakby tylko 1 element na raz
         else:
             for i in self.input_matrix:
                 self.change_alpha()
@@ -159,11 +158,10 @@ class KohonenOrNeuralGas:
 
     # wypełniamy macierz w której odpowiadające indexy w self.map
     def distance_map_fill(self, point):
-        # TODO zmien nazwe zmiennej
-        potezna_lista = []
+        distance_map_list = []
         for i in self.map:
-            potezna_lista.append(distance.euclidean(i, point))
-        self.distance_map = np.asarray(potezna_lista)
+            distance_map_list.append(distance.euclidean(i, point))
+        self.distance_map = np.asarray(distance_map_list)
 
     def animate_training(self):
         fig, ax = plt.subplots()
