@@ -94,11 +94,12 @@ class KohonenOrNeuralGas:
 
                 self.current_step += 1
                 if self.current_step % 100 == 0:
-                    print("Iteration in epoch nr", self.current_step)
+                    print("Currently ", (self.current_step * 100) / self.max_step, "% done")
 
         # metoda gazu neuronowego
         # sortujemy neurony wg odległości od aktualnego wektoru wejścia
         # liczymy zmianę pozycji w zależności od pozycji w rankingu a nie od faktycznej odległosci
+        # TODO: nie podoba mi sie to co mi pokazuje animacja, że zmienia sie jakby tylko 1 element na raz
         else:
             for i in self.input_matrix:
                 self.change_alpha()
@@ -113,7 +114,7 @@ class KohonenOrNeuralGas:
 
                 self.current_step += 1
                 if self.current_step % 100 == 0:
-                    print("Iteration in epoch nr", self.current_step)
+                    print("Currently ", (self.current_step * 100) / self.max_step, "% done")
 
     # dla gazu neuronowego zwraca współczynnik związany z rankingiem punktu
     def neural_gass_neighbour_fun(self, ranking):
@@ -174,24 +175,12 @@ class KohonenOrNeuralGas:
         def animate(i):
             if i > len(self.animation_list) - 1:
                 i = len(self.animation_list) - 1
-            # print(i)
-            # print(self.animation_list[i + 1] - self.animation_list[i])
             l.set_data(self.animation_list[i][:, 0], self.animation_list[i][:, 1])
-            return l,
+            ax.set_title("Step nr " + str(i))
+            return l
 
-        ani = animation.FuncAnimation(fig, animate, interval=100, repeat=False)
+        ani = animation.FuncAnimation(fig, animate, interval=1, repeat=False)
         plt.show()
-        # fig = plt.figure()
-        #
-        #
-        # def animate(i):
-        #     # graph.set_data(self.animation_list[i][:, 0], self.animation_list[i][:, 1])
-        #     # graph.set_offsets(np.vstack((self.animation_list[i][:, 0], self.animation_list[i][:, 1])).T)
-        #     graph = plt.plot(self.animation_list[0][:, 0], self.animation_list[0][:, 1])
-        #     return graph
-        #
-        # ani = animation.FuncAnimation(fig, animate, repeat=False, interval=200)
-        # plt.show()
 
 
 def read_2d_float_array_from_file(file_name, is_comma=False):
@@ -235,10 +224,10 @@ def main():
     # kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt"), neuron_num=300,
-                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=1)
-    plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.1)
+    # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.train()
-    plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+    # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.animate_training()
 
 
