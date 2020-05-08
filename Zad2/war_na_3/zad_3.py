@@ -19,7 +19,7 @@ class KohonenOrNeuralGas:
     # dla kazdej metody to nieco inne jest ale generalnie uzywane w liczeniu tego G(i, x) co jest we wzorach
 
     def __init__(self, input_matrix, neuron_num, is_neural_gas=False,
-                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.3, epoch_count=1):
+                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.3, epoch_count=1, min_potential=0.75):
         # liczba neuronów i dane wejsciowe
         self.neuron_num = neuron_num
         self.input_matrix = input_matrix
@@ -34,8 +34,6 @@ class KohonenOrNeuralGas:
         # losujemy startowe pozycje neuronów
         self.map = np.random.normal(np.mean(input_matrix), np.std(input_matrix),
                                     size=(self.neuron_num, len(input_matrix[0])))
-        # tutaj pozniej przechowujemy odleglosci odpowiednich neuronów od aktualnie rozpatrywanego wektoru wejściowego
-        self.distance_map = np.zeros_like(self.map)
 
         # wspolczynnik uczenia, max, min i current - zmienia sie w trakcie
         self.alfa_max = alfa
@@ -49,6 +47,12 @@ class KohonenOrNeuralGas:
 
         # uzywamy w 2 miejscach, generalnie srednio potrzebne
         self.num_rows_input_data, self.num_cols_input_data = self.input_matrix.shape
+
+        # tutaj pozniej przechowujemy odleglosci odpowiednich neuronów od aktualnie rozpatrywanego wektoru wejściowego
+        self.distance_map = np.zeros(self.num_rows_input_data)
+        # potencjaly do matwych neuronów-
+        self.potentials = np.ones(self.num_rows_input_data)
+        self.min_potential = min_potential
 
         # aktualny krok i maksymalna liczba kroków (liczba rzędów w wejsciu razy liczba epok)
         # uzywamy maxymalny step i current step do liczenia tych current alfa i current_neighbourhood_radius
@@ -116,6 +120,15 @@ class KohonenOrNeuralGas:
                     print("Currently ", (self.current_step * 100) / self.max_step, "% done")
 
         self.animation_list.append(np.copy(self.map))
+
+    def get_not_sleeping_neurons_and_distances(self):
+        neuron_list = []
+        distance_list = []
+        for i in range(len(self.map)):
+            if self.potentials[i] > self.min_potential:
+                neuron_list.append(self.map[i])
+                distance_list.append(self.distance_map[i])
+        return np.asarray(neuron_list), np.asarray(distance_list)
 
     # dla gazu neuronowego zwraca współczynnik związany z rankingiem punktu
     def neural_gass_neighbour_fun(self, ranking):
@@ -223,8 +236,8 @@ def main():
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     # kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt"), neuron_num=300,
-                                 is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=5)
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True), neuron_num=300,
+                                 is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=3)
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
