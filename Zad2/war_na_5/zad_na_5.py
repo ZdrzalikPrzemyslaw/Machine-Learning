@@ -1,16 +1,8 @@
+from PIL import Image
 import numpy as np
-import matplotlib
 
-matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 from scipy.spatial import distance
 
-
-# wagi - współrzędne punktu
-
-# TODO:
-#   przeczytać uważnie całą prezentację
 
 class KohonenOrNeuralGas:
     # alfa - wpsolczynnik uczenia, neighbourhood_radius - to co we wzorach jest opisane lambda
@@ -61,16 +53,14 @@ class KohonenOrNeuralGas:
         # tutaj przechowujemy błędy liczone po każdej epoce (bardzo wolno liczy się błąd)
         self.quantization_error_list = []
 
-        self.animation_list = []
-
     # jedna epoka
     def epoch(self):
         np.random.shuffle(self.input_matrix)
+        current_percent = 0
         if not self.is_neural_gas:
             for i in self.input_matrix:
                 self.change_alpha()
                 self.change_neighbourhood_radius()
-                self.animation_list.append(np.copy(self.map))
 
                 # klasyczny wariant Kohenena,
                 # modyfikacja zwyciezcy oraz znajdujących się o self.current_neighbourhood_radius od niego neuronów
@@ -100,13 +90,14 @@ class KohonenOrNeuralGas:
                     for j in range(len(map_not_sleeping)):
                         map_not_sleeping[j] = map_not_sleeping[j] + self.current_alfa \
                                               * self.euclidean_func(self.map[smallest_index], self.map[j]) * (
-                                                          i - map_not_sleeping[j])
+                                                      i - map_not_sleeping[j])
 
                     for j in range(len(map_not_sleeping)):
                         self.map[true_index[j]] = map_not_sleeping[j]
 
                 self.current_step += 1
-                if self.current_step % 100 == 0:
+                if (self.current_step * 100) / self.max_step > current_percent:
+                    current_percent += 1
                     print("Currently ", (self.current_step * 100) / self.max_step, "% done")
 
         # metoda gazu neuronowego
@@ -120,7 +111,6 @@ class KohonenOrNeuralGas:
                 map_not_sleeping, distance_map_not_sleeping, true_index = self.get_not_sleeping_neurons_and_distances()
                 distance_ranking = np.argsort(distance_map_not_sleeping)
                 self.change_potentials(true_index[np.argmin(distance_map_not_sleeping)])
-                self.animation_list.append(np.copy(self.map))
                 for j in range(len(distance_ranking)):
                     map_not_sleeping[distance_ranking[j]] = map_not_sleeping[distance_ranking[j]] \
                                                             + self.current_alfa * self.neural_gass_neighbour_fun(j) * (
@@ -129,15 +119,14 @@ class KohonenOrNeuralGas:
                     self.map[true_index[j]] = map_not_sleeping[j]
 
                 self.current_step += 1
-                if self.current_step % 100 == 0:
+                if (self.current_step * 100) / self.max_step > current_percent:
+                    current_percent += 1
                     print("Currently ", (self.current_step * 100) / self.max_step, "% done")
                     # counter = 0
                     # for i in self.potentials:
                     #     if i > self.min_potential:
                     #         counter += 1
                     # print(counter)
-
-        self.animation_list.append(np.copy(self.map))
 
     # zmiana potencjałów dla
     def change_potentials(self, index):
@@ -189,10 +178,19 @@ class KohonenOrNeuralGas:
     def calculate_quantization_error(self):
         print("*calculating quantization error*")
         __sum = 0
+        counter = 0
+        percent = 0
         for i in self.input_matrix:
             self.distance_map_fill(i)
             __sum += np.min(self.distance_map) ** 2
+            counter += 1
+            if (counter * 100) / self.num_rows_input_data > percent:
+                percent += 1
+                print("Currently ", (counter * 100) / self.num_rows_input_data, "% done")
         self.quantization_error_list.append(__sum / self.num_rows_input_data)
+        with open("quantization_error.txt", "a") as file:
+            file.write(str(__sum / self.num_rows_input_data) + "\n")
+        pass
 
     # wypełniamy macierz w której odpowiadające indexy w self.map
     def distance_map_fill(self, point):
@@ -201,70 +199,55 @@ class KohonenOrNeuralGas:
             distance_map_list.append(distance.euclidean(i, point))
         self.distance_map = np.asarray(distance_map_list)
 
-    def animate_training(self):
-        fig, ax = plt.subplots()
 
-        ax.axis([np.min(self.animation_list[0], axis=0)[0] - 1, np.max(self.animation_list[0], axis=0)[0] + 1,
-                 np.min(self.animation_list[0], axis=0)[1] - 1, np.max(self.animation_list[0], axis=0)[1] + 1])
-
-        ax.plot(self.input_matrix[:, 0], self.input_matrix[:, 1], 'ro')
-        l, = ax.plot([], [], 'bo')
-
-        def animate(i):
-            if i > len(self.animation_list) - 1:
-                i = len(self.animation_list) - 1
-            l.set_data(self.animation_list[i][:, 0], self.animation_list[i][:, 1])
-            ax.set_title("Step nr " + str(i))
-            return l
-
-        ani = animation.FuncAnimation(fig, animate, interval=1, repeat=False)
-        plt.show()
+def image_pixels_to_array(image):
+    size_x, size_y = image.size
+    pix = image.load()
+    pixels_list = []
+    for i in range(size_x):
+        for j in range(size_y):
+            pixels_list.append(pix[i, j])
+    return np.asarray(pixels_list)
 
 
-def read_2d_float_array_from_file(file_name, is_comma=False):
-    two_dim_list_of_return_values = []
-    with open(file_name, "r") as file:
-        lines = file.read().splitlines()
-    for i in lines:
-        one_dim_list = []
-        if not is_comma:
-            for j in list(map(float, i.split())):
-                one_dim_list.append(j)
-            two_dim_list_of_return_values.append(one_dim_list)
-        else:
-            for j in list(map(float, i.split(","))):
-                one_dim_list.append(j)
-            two_dim_list_of_return_values.append(one_dim_list)
-    return np.asarray(two_dim_list_of_return_values)
+def save_new_picture(image, kohonen):
 
+    def distance_map(point, kohonen_map):
+        distance_map_list = []
+        for i in kohonen_map:
+            distance_map_list.append(distance.euclidean(i, point))
+        return np.asarray(distance_map_list)
 
-def plot(list2d, list2d2=None):
-    list1 = []
-    list2 = []
-    list3 = []
-    list4 = []
-    if list2d2 is not None:
-        for i in list2d2:
-            list3.append(i[0])
-            list4.append(i[1])
-        plt.plot(list3, list4, 'bo', color='red')
-    for i in list2d:
-        list1.append(i[0])
-        list2.append(i[1])
-    plt.plot(list1, list2, 'bo')
-    plt.show()
+    def totuple(a):
+        try:
+            return tuple(totuple(int(i)) for i in a)
+        except TypeError:
+            return a
+
+    if type(kohonen) is KohonenOrNeuralGas:
+        size_x, size_y = image.size
+        pix = image.load()
+        percent = 0
+        for i in range(size_x):
+            for j in range(size_y):
+                distance_list = distance_map(pix[i, j], kohonen.map)
+                index = np.argmin(distance_list)
+                pix[i, j] = totuple(np.rint(kohonen.map[index]))
+
+            if (i * 100) / size_x > percent:
+                percent += 1
+                print("Currently ", (i * 100) / size_x, "% done (writing to file)")
+        image.save('SUPEROBRAZEK.png')
 
 
 def main():
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
-                                 neuron_num=100,
+    im = Image.open('12-Angry-Men-The-Jurors-700x525.jpg')
+    kohonen = KohonenOrNeuralGas(input_matrix=image_pixels_to_array(im),
+                                 neuron_num=16,
                                  is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1.5,
                                  min_potential=0, alfa=0.8)
-    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen.train()
-    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-
-    kohonen.animate_training()
+    save_new_picture(im, kohonen)
 
 
 if __name__ == '__main__':
