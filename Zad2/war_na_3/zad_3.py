@@ -4,14 +4,12 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from scipy.interpolate import interp1d
 from scipy.spatial import distance
 
 
 # wagi - współrzędne punktu
 
 # TODO:
-#   Pokonać problem martwych neuronów
 #   przeczytać uważnie całą prezentację
 
 class KohonenOrNeuralGas:
@@ -103,7 +101,8 @@ class KohonenOrNeuralGas:
                     smallest_index = np.argmin(distance_map_not_sleeping)
                     for j in range(len(map_not_sleeping)):
                         map_not_sleeping[j] = map_not_sleeping[j] + self.current_alfa \
-                                      * self.euclidean_func(self.map[smallest_index], self.map[j]) * (i - map_not_sleeping[j])
+                                              * self.euclidean_func(self.map[smallest_index], self.map[j]) * (
+                                                          i - map_not_sleeping[j])
 
                     for j in range(len(map_not_sleeping)):
                         self.map[true_index[j]] = map_not_sleeping[j]
