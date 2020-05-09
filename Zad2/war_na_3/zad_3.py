@@ -50,7 +50,6 @@ class KohonenOrNeuralGas:
         self.distance_map = np.zeros(neuron_num)
         # potencjaly do matwych neuronów
         # ustawiamy na 0 to mamy dzialanie jak wczesniej
-        # TODO: TO NIE POMAGA A WRECZ PRZESZKADZA XD CO ZA GÓWNO A JUŻ MI SIĘ TO ZADANIE PODOBALO
         self.potentials = np.ones(neuron_num)
         self.min_potential = min_potential
 
@@ -71,7 +70,6 @@ class KohonenOrNeuralGas:
             for i in self.input_matrix:
                 self.change_alpha()
                 self.change_neighbourhood_radius()
-                # print(self.animation_list)
                 self.animation_list.append(np.copy(self.map))
 
                 # klasyczny wariant Kohenena,
@@ -141,6 +139,7 @@ class KohonenOrNeuralGas:
 
         self.animation_list.append(np.copy(self.map))
 
+    # zmiana potencjałów dla
     def change_potentials(self, index):
         self.potentials += 1 / len(self.potentials)
         self.potentials[index] -= 1 / len(self.potentials)
@@ -258,20 +257,15 @@ def plot(list2d, list2d2=None):
 
 
 def main():
-    # kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
-    #                                 neuron_num=200, is_neural_gas=True, epoch_count=1)
-    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-    # kohonen.train()
-    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt", is_comma=False),
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
                                  neuron_num=300,
-                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.04,
-                                 min_potential=0.80)
-    # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.05,
+                                 min_potential=0.8, alfa=0.8)
+    plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen.train()
-    # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
+    plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
 
-    kohonen.animate_training()
+    # kohonen.animate_training()
 
 
 if __name__ == '__main__':
