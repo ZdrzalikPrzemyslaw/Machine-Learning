@@ -1,7 +1,7 @@
 import numpy as np
-import matplotlib;
+import matplotlib
 
-# matplotlib.use("TkAgg")
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import interp1d
@@ -37,12 +37,12 @@ class KohonenOrNeuralGas:
 
         # wspolczynnik uczenia, max, min i current - zmienia sie w trakcie
         self.alfa_max = alfa
-        self.alfa_min = 0.01
+        self.alfa_min = 0.0001
         self.current_alfa = self.alfa_max
 
         # ten drugi wspolczynnik lambda, max, min i current - zmienia sie w trakcie
         self.neighbourhood_radius_max = neighbourhood_radius
-        self.neighbourhood_radius_min = 0.01
+        self.neighbourhood_radius_min = 0.0001
         self.current_neighbourhood_radius = self.neighbourhood_radius_max
 
         # uzywamy w 2 miejscach, generalnie srednio potrzebne
@@ -82,7 +82,7 @@ class KohonenOrNeuralGas:
                     self.distance_map_fill(i)
                     map_not_sleeping, distance_map_not_sleeping, true_index = \
                         self.get_not_sleeping_neurons_and_distances()
-                    self.change_potentials(true_index[np.argmax(distance_map_not_sleeping)])
+                    self.change_potentials(true_index[np.argmin(distance_map_not_sleeping)])
                     smallest_index = np.argmin(distance_map_not_sleeping)
                     for j in range(len(map_not_sleeping)):
                         # sprawdzamy czy odległość neuronu od zwycięzcy jest mniejsza niż current_neighbourhood_radius
@@ -99,7 +99,7 @@ class KohonenOrNeuralGas:
                     self.distance_map_fill(i)
                     map_not_sleeping, distance_map_not_sleeping, true_index = \
                         self.get_not_sleeping_neurons_and_distances()
-                    self.change_potentials(true_index[np.argmax(distance_map_not_sleeping)])
+                    self.change_potentials(true_index[np.argmin(distance_map_not_sleeping)])
                     smallest_index = np.argmin(distance_map_not_sleeping)
                     for j in range(len(map_not_sleeping)):
                         map_not_sleeping[j] = map_not_sleeping[j] + self.current_alfa \
@@ -122,7 +122,7 @@ class KohonenOrNeuralGas:
                 self.distance_map_fill(i)
                 map_not_sleeping, distance_map_not_sleeping, true_index = self.get_not_sleeping_neurons_and_distances()
                 distance_ranking = np.argsort(distance_map_not_sleeping)
-                self.change_potentials(true_index[np.argmax(distance_map_not_sleeping)])
+                self.change_potentials(true_index[np.argmin(distance_map_not_sleeping)])
                 self.animation_list.append(np.copy(self.map))
                 for j in range(len(distance_ranking)):
                     map_not_sleeping[distance_ranking[j]] = map_not_sleeping[distance_ranking[j]] \
@@ -266,8 +266,8 @@ def main():
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("punkty.txt", is_comma=False),
                                  neuron_num=300,
-                                 is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=2,
-                                 min_potential=0.75)
+                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.04,
+                                 min_potential=0.80)
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
     kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("punkty.txt", is_comma=False))
