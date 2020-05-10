@@ -256,7 +256,7 @@ def plot(list2d, list2d2=None):
 
 
 def main():
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
                                  neuron_num=100,
                                  is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1.5,
                                  min_potential=0, alfa=0.8)
