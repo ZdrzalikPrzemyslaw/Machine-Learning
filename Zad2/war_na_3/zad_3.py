@@ -17,7 +17,7 @@ class KohonenOrNeuralGas:
     # dla kazdej metody to nieco inne jest ale generalnie uzywane w liczeniu tego G(i, x) co jest we wzorach
 
     def __init__(self, input_matrix, neuron_num, is_neural_gas=False,
-                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.3, epoch_count=1, min_potential=0.75):
+                 is_gauss=True, alfa=0.6, neighbourhood_radius=0.3, epoch_count=1, min_potential=0.75, starting_pos=[]):
         # liczba neuronów i dane wejsciowe
         self.neuron_num = neuron_num
         self.input_matrix = input_matrix
@@ -29,10 +29,12 @@ class KohonenOrNeuralGas:
         # ile epok
         self.epoch_count = epoch_count
 
-        # losujemy startowe pozycje neuronów
-        self.map = np.random.normal(np.mean(input_matrix), np.std(input_matrix),
-                                    size=(self.neuron_num, len(input_matrix[0])))
-
+        # # losujemy startowe pozycje neuronów
+        # self.map = np.random.normal(np.mean(input_matrix), np.std(input_matrix),
+        #                             size=(self.neuron_num, len(input_matrix[0])))
+        
+        self.initial_position = starting_pos
+        self.map = self.array_to_list()
         # wspolczynnik uczenia, max, min i current - zmienia sie w trakcie
         self.alfa_max = alfa
         self.alfa_min = 0.0001
@@ -179,11 +181,11 @@ class KohonenOrNeuralGas:
     # nauka + liczymy błędy kwantyzacji
     def train(self):
         for i in range(self.epoch_count):
-            self.calculate_quantization_error()
-            print("current_quant_error = ", self.quantization_error_list[i])
+            # self.calculate_quantization_error()
+            # print("current_quant_error = ", self.quantization_error_list[i])
             self.epoch()
-        self.calculate_quantization_error()
-        print("current_quant_error = ", self.quantization_error_list[-1])
+        # self.calculate_quantization_error()
+        # print("current_quant_error = ", self.quantization_error_list[-1])
 
     # obliczanie błędu kwantyzacji ze wzoru
     def calculate_quantization_error(self):
@@ -220,6 +222,17 @@ class KohonenOrNeuralGas:
         ani = animation.FuncAnimation(fig, animate, interval=1, repeat=False)
         plt.show()
 
+    def initial_positions_to_file(self, file_name):
+        with open(file_name, "w") as file:
+            for point in self.initial_position:
+                file.write(str(point[0]) + "," + str(point[1]))
+                file.write("\n")
+                    
+    def array_to_list(self):
+        mpa = []
+        for i in self.initial_position:
+            mpa.append(i)
+        return mpa
 
 def read_2d_float_array_from_file(file_name, is_comma=False):
     two_dim_list_of_return_values = []
@@ -238,7 +251,7 @@ def read_2d_float_array_from_file(file_name, is_comma=False):
     return np.asarray(two_dim_list_of_return_values)
 
 
-def plot(list2d, list2d2=None):
+def plot(list2d, list2d2=None, counter=0, network=None, folder_name=""):
     list1 = []
     list2 = []
     list3 = []
@@ -247,24 +260,118 @@ def plot(list2d, list2d2=None):
         for i in list2d2:
             list3.append(i[0])
             list4.append(i[1])
-        plt.plot(list3, list4, 'bo', color='red')
+        plt.plot(list3, list4, '^', color='red')
     for i in list2d:
         list1.append(i[0])
         list2.append(i[1])
     plt.plot(list1, list2, 'bo')
-    plt.show()
+    plt.title("steps: " + str(counter))
+    plt.savefig("Zad2\war_na_3\ploty" + "\e"+ folder_name +"\p_gauss_" +str(network.is_gauss) +"_gas_" +str(network.is_neural_gas) + "_radius_" + str(network.neighbourhood_radius_max)
+                + "_alfa_" + str(network.alfa_max) + "_step_" + str(counter) + ".png")
+    plt.clf()
 
 
 def main():
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
-                                 neuron_num=50,
-                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=2,
-                                 min_potential=0.75, alfa=0.5)
-    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
-    kohonen.train()
-    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
+    np.random.seed(0)
+    
+    eksperyment1 = "eks3"
+    eksperyment2 = "eks4"
+    #eksperyment stala alfa inny radius
+    # kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+    #                              neuron_num=100,
+    #                              is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.5,
+    #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    # kohonen1 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+    #                              neuron_num=100,
+    #                              is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.5,
+    #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    # kohonen2 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+    #                              neuron_num=100,
+    #                              is_gauss=False, is_neural_gas=True, epoch_count=1, neighbourhood_radius=0.5,
+    #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    
+    # kohonen3 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+    #                              neuron_num=100,
+    #                              is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=2,
+    #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    # kohonen4 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+    #                              neuron_num=100,
+    #                              is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=2,
+    #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    # kohonen5 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+    #                              neuron_num=100,
+    #                              is_gauss=False, is_neural_gas=True, epoch_count=1, neighbourhood_radius=2,
+    #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    
 
-    kohonen.animate_training()
+
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=1,
+                                 min_potential=0.75, alfa=0.1, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    kohonen1 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=1,
+                                 min_potential=0.75, alfa=0.1, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    kohonen2 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=False, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1,
+                                 min_potential=0.75, alfa=0.1, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    
+    kohonen3 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=1,
+                                 min_potential=0.75, alfa=0.8, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    kohonen4 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=1,
+                                 min_potential=0.75, alfa=0.8, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    kohonen5 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=False, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1,
+                                 min_potential=0.75, alfa=0.8, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
+    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
+    # kohonen.initial_positions_to_file("test.txt")
+    #100 neuronow, alfa 0.5 radius 0.5
+    kohonen.train()
+    kohonen1.train()
+    kohonen2.train()
+
+    #100 neuronow, alfa 0.5 radius 2
+    kohonen3.train()
+    kohonen4.train()
+    kohonen5.train()
+    # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
+    plot(kohonen.initial_position, kohonen.input_matrix, 0, kohonen, eksperyment1)
+    plot(kohonen.animation_list[200], kohonen.input_matrix, 200, kohonen, eksperyment1)
+    plot(kohonen.animation_list[2000], kohonen.input_matrix, 2000, kohonen, eksperyment1)
+    plot(kohonen.animation_list[9999], kohonen.input_matrix, 9999, kohonen, eksperyment1)
+
+    plot(kohonen1.initial_position, kohonen1.input_matrix, 0, kohonen1, eksperyment1)
+    plot(kohonen1.animation_list[200], kohonen1.input_matrix, 200, kohonen1, eksperyment1)
+    plot(kohonen1.animation_list[2000], kohonen1.input_matrix, 2000, kohonen1, eksperyment1)
+    plot(kohonen1.animation_list[9999], kohonen1.input_matrix, 9999, kohonen1, eksperyment1)
+
+    plot(kohonen2.initial_position, kohonen2.input_matrix, 0, kohonen2, eksperyment1)
+    plot(kohonen2.animation_list[200], kohonen2.input_matrix, 200, kohonen2, eksperyment1)
+    plot(kohonen2.animation_list[2000], kohonen2.input_matrix, 2000, kohonen2, eksperyment1)
+    plot(kohonen2.animation_list[9999], kohonen2.input_matrix, 9999, kohonen2, eksperyment1)
+
+    plot(kohonen3.initial_position, kohonen3.input_matrix, 0, kohonen3, eksperyment2)
+    plot(kohonen3.animation_list[200], kohonen3.input_matrix, 200, kohonen3, eksperyment2)
+    plot(kohonen3.animation_list[2000], kohonen3.input_matrix, 2000, kohonen3, eksperyment2)
+    plot(kohonen3.animation_list[9999], kohonen3.input_matrix, 9999, kohonen3, eksperyment2)
+
+    plot(kohonen4.initial_position, kohonen4.input_matrix, 0, kohonen4, eksperyment2)
+    plot(kohonen4.animation_list[200], kohonen4.input_matrix, 200, kohonen4, eksperyment2)
+    plot(kohonen4.animation_list[2000], kohonen4.input_matrix, 2000, kohonen4, eksperyment2)
+    plot(kohonen4.animation_list[9999], kohonen4.input_matrix, 9999, kohonen4, eksperyment2)
+
+    plot(kohonen5.initial_position, kohonen5.input_matrix, 0, kohonen5, eksperyment2)
+    plot(kohonen5.animation_list[200], kohonen5.input_matrix, 200, kohonen5, eksperyment2)
+    plot(kohonen5.animation_list[2000], kohonen5.input_matrix, 2000, kohonen5, eksperyment2)
+    plot(kohonen5.animation_list[9999], kohonen5.input_matrix, 9999, kohonen5, eksperyment2)
+    # kohonen.animate_training()
 
 
 if __name__ == '__main__':

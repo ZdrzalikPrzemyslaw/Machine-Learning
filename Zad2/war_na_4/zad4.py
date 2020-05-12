@@ -188,7 +188,7 @@ class KMean:
         plt.savefig("Zad2/war_na_4/" + str(self.epoch_counter) + ".png")
         plt.clf()
         self.images.append(imageio.imread("Zad2/war_na_4/" + str(self.epoch_counter) + ".png"))
-        os.remove("Zad2/war_na_4/" + str(self.epoch_counter) + ".png")
+        # os.remove("Zad2/war_na_4/" + str(self.epoch_counter) + ".png")
 
     #funkcja rysujaca kolejne wykresy
     def animation_plot(self):
@@ -203,7 +203,7 @@ class KMean:
         plt.savefig("Zad2/war_na_4/" + str(self.epoch_counter) + ".png")
         plt.clf()
         self.images.append(imageio.imread("Zad2/war_na_4/" + str(self.epoch_counter) + ".png"))
-        os.remove("Zad2/war_na_4/" + str(self.epoch_counter) + ".png")
+        # os.remove("Zad2/war_na_4/" + str(self.epoch_counter) + ".png")
 
     #funkcja tworzaca gifa
     def create_gif(self):
@@ -241,8 +241,8 @@ def generate_random_points_in_range(x_min, x_max, y_min, y_max):
 
 def main():
 
-    NUMBER_OF_CENTROIDS = 5
-    NUMBER_OF_EPOCH = 8
+    NUMBER_OF_CENTROIDS = 8
+    NUMBER_OF_EPOCH = 12
 
     kMean = KMean(points_matrix=create_points("Zad2/war_na_3/Danetestowe.txt", is_comma=True), 
                     number_of_centroids=NUMBER_OF_CENTROIDS, number_of_epoch=NUMBER_OF_EPOCH)
