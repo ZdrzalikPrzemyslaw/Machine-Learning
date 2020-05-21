@@ -146,4 +146,4 @@ test.txt
 *.zip
 *.zipp
 *.tmp
-mean_squared_error.txt
+*/mean_squared_error.txt
