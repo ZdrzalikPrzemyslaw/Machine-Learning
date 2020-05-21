@@ -129,6 +129,8 @@ class NeuralNetwork:
         # Pochodna funkcji liniowej = 1
         output_delta = output_error * 1
 
+
+
         output_layer_adjustment = []
         for i in output_delta:
             output_layer_adjustment.append(hidden_layer_output * i)
@@ -198,7 +200,7 @@ def main():
     neurons = 7
     train_file = "approximation_train_1.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1])
+    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1])
     iterations = 1000
     # dane wejściowe, dane wyjściowe, ilość epochów
     siec.train(iterations)
