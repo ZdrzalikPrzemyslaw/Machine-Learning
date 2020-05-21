@@ -1,7 +1,7 @@
 import numpy
 import time
 # import bigfloat
-
+from scipy.stats import norm
 from scipy.spatial import distance
 
 import matplotlib.pyplot as plt
@@ -11,6 +11,11 @@ eta = 0.1
 # momentum
 alfa = 0
 
+
+# FIXME TO zadanie jest aktualnie ostro spieprzone
+#   na wejsciu podajemy aktualnie X i Y
+#   to ma aproksymować funkcję więc musi danemu X przyporządkowywać Y
+#   to że aktualnie wychodzi nam że musimy podać X i Y by przyporządkować Y? NO bez sensu totalnie
 
 class NeuralNetwork:
     def __repr__(self):
@@ -45,12 +50,15 @@ class NeuralNetwork:
         print(self.hidden_layer)
 
         self.scale_coefficient = numpy.ones(numpy.size(self.hidden_layer, 0))
+        # self.find_sigma()
+        # print(self.scale_coefficient)
         # TODO tutaj brakuje funkcji która liczy te współczynniki
 
         self.delta_weights_hidden_layer = numpy.ones((len(input_data_random_order[0]),
-                                                       number_of_neurons_hidden_layer)).T
+                                                      number_of_neurons_hidden_layer)).T
 
         self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)).T - 1
+        print(self.output_layer)
         self.delta_weights_output_layer = numpy.zeros((number_of_neurons_hidden_layer, number_of_neurons_output)).T
         # jesli wybralismy że bias ma byc to tworzymy dla każdej warstwy wektor wag biasu
         if is_bias:
@@ -76,17 +84,29 @@ class NeuralNetwork:
     def sigmoid_fun_deriative(self, inputcik):
         return inputcik * (1 - inputcik)
 
+    def find_sigma(self):
+        pass
+        for i in range(numpy.size(self.hidden_layer, 0)):
+            max_dist = 0
+            for j in range(numpy.size(self.hidden_layer, 0)):
+                dist = distance.euclidean(self.hidden_layer[i], self.hidden_layer[j])
+                if dist > max_dist:
+                    max_dist = dist
+            self.scale_coefficient[i] = \
+                max_dist / (numpy.sqrt(2 * numpy.size(self.hidden_layer, 0)))
+
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     def calculate_outputs(self, inputs):
         hidden_layer_output = []
+        # todo bias
         for i in range(numpy.size(self.hidden_layer, 0)):
-            value = numpy.exp(-((distance.euclidean(self.hidden_layer[i], inputs) ** 2) /
-                                (2 * self.scale_coefficient[i] ** 2)))
-            hidden_layer_output.append(value)
-        hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) + self.bias_hidden_layer)
-        output_layer_output = numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer
+            dist = (distance.euclidean(self.hidden_layer[i], inputs) ** 2)
+            denominator = 2 * (self.scale_coefficient[i] ** 2)
+            value = numpy.exp(-1 * (dist / denominator))
 
+            hidden_layer_output.append(value)
+        output_layer_output = numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer
         return hidden_layer_output, output_layer_output
 
     # trening, tyle razy ile podamy epochów
@@ -118,7 +138,6 @@ class NeuralNetwork:
         join_k_j = numpy.concatenate((k, j), axis=None)
         # print(join_k_j)
         hidden_layer_output, output_layer_output = self.calculate_outputs(join_k_j)
-
         # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
         output_error = output_layer_output - j
         mean_squared_error = output_error.dot(output_error) / 2
@@ -128,11 +147,11 @@ class NeuralNetwork:
         # Pochodna funkcji liniowej = 1
         output_delta = output_error * 1
 
-
-
         output_layer_adjustment = []
+
         for i in output_delta:
-            output_layer_adjustment.append(hidden_layer_output * i)
+            value = [i * j for j in hidden_layer_output]
+            output_layer_adjustment.append(value)
         output_layer_adjustment = numpy.asarray(output_layer_adjustment)
 
         # jeżeli wybraliśmy żeby istniał bias to teraz go modyfikujemy
@@ -199,8 +218,9 @@ def main():
     neurons = 7
     train_file = "approximation_train_1.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1])
-    iterations = 1000
+    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
+                         read_2d_float_array_from_file(train_file)[:, 1])
+    iterations = 100
     # dane wejściowe, dane wyjściowe, ilość epochów
     siec.train(iterations)
     plot_file()
