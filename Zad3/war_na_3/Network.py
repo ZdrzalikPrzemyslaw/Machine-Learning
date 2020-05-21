@@ -2,10 +2,12 @@ import numpy
 import time
 # import bigfloat
 
+from scipy.spatial import distance
+
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.4
+eta = 0.1
 # momentum
 alfa = 0
 
@@ -42,10 +44,10 @@ class NeuralNetwork:
             self.hidden_layer[i] = input_data_random_order[i]
         print(self.hidden_layer)
 
-        self.scale_coefficient = numpy.zeros(numpy.size(self.hidden_layer, 0))
+        self.scale_coefficient = numpy.ones(numpy.size(self.hidden_layer, 0))
         # TODO tutaj brakuje funkcji która liczy te współczynniki
 
-        self.delta_weights_hidden_layer = numpy.zeros((len(input_data_random_order[0]),
+        self.delta_weights_hidden_layer = numpy.ones((len(input_data_random_order[0]),
                                                        number_of_neurons_hidden_layer)).T
 
         self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)).T - 1
@@ -77,7 +79,12 @@ class NeuralNetwork:
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     def calculate_outputs(self, inputs):
-
+        #Todo: sposób wyliczania wartosci z hidden layer
+        hidden_layer_output = []
+        for i in range(numpy.size(self.hidden_layer, 0)):
+            value = numpy.exp(-((distance.euclidean(self.hidden_layer[i], inputs) ** 2) /
+                                (2 * self.scale_coefficient[i] ** 2)))
+            hidden_layer_output.append(value)
         hidden_layer_output = self.sigmoid_fun(numpy.dot(inputs, self.hidden_layer.T) + self.bias_hidden_layer)
         output_layer_output = numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer
 
@@ -109,7 +116,9 @@ class NeuralNetwork:
                 file.write(str(i) + "\n")
 
     def epoch(self, k, j):
-        hidden_layer_output, output_layer_output = self.calculate_outputs(k)
+        join_k_j = numpy.concatenate((k, j), axis=None)
+        # print(join_k_j)
+        hidden_layer_output, output_layer_output = self.calculate_outputs(join_k_j)
 
         # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
         output_error = output_layer_output - j
@@ -160,7 +169,9 @@ def plot_function(siec, title, neurons, points=None):
     if points is not None:
         values = []
         for i in points:
-            values.append(siec.calculate_outputs(i)[1][0][0])
+            values.append(siec.calculate_outputs(i)[1])
+            # print(values[-1])
+        points = points[:, 0]
         plt.plot(points, values, 'o', markersize=1)
         plt.xlabel('X')
         plt.ylabel('Y')
@@ -183,22 +194,28 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    numpy.random.seed(0)
+    # numpy.random.seed(0)
     neurons = 7
     train_file = "approximation_train_1.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1])
-    # iterations = 1000
-    # # dane wejściowe, dane wyjściowe, ilość epochów
-    # siec.train(iterations)
-    # plot_file()
+    iterations = 1000
+    # dane wejściowe, dane wyjściowe, ilość epochów
+    siec.train(iterations)
+    plot_file()
     # counter = 0
     # blad = 0
     # for i in read_2d_float_array_from_file("approximation_test.txt"):
     #     blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
     #     counter += 1
     # blad = blad / counter
-    # plot_function(siec, train_file, neurons, numpy.sort(read_2d_float_array_from_file("approximation_test.txt")[:, 0]))
+    values = read_2d_float_array_from_file("approximation_test.txt")
+    values2 = numpy.zeros_like(values)
+    indexes = numpy.argsort(values[:, 0])
+    for i in range(len(indexes)):
+        values2[i] = values[indexes[i]]
+    print(values2)
+    plot_function(siec, train_file, neurons, values2)
     # print("BLAD ", blad)
 
 
