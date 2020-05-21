@@ -142,3 +142,7 @@ punkty.txt
 *.gif
 
 test.txt
+*.docx
+*.zip
+*.zipp
+*.tmp
