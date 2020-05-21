@@ -1,7 +1,4 @@
 import numpy
-import time
-# import bigfloat
-from scipy.stats import norm
 from scipy.spatial import distance
 
 import matplotlib.pyplot as plt
@@ -9,13 +6,9 @@ import matplotlib.pyplot as plt
 # wspolczynnik uczenia
 eta = 0.1
 # momentum
-alfa = 0.2
+alfa = 0
 
 
-# FIXME TO zadanie jest aktualnie ostro spieprzone
-#   na wejsciu podajemy aktualnie X i Y
-#   to ma aproksymować funkcję więc musi danemu X przyporządkowywać Y
-#   to że aktualnie wychodzi nam że musimy podać X i Y by przyporządkować Y? NO bez sensu totalnie
 
 class NeuralNetwork:
     def __repr__(self):
@@ -214,8 +207,8 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    # numpy.random.seed(0)
-    neurons = 10
+    numpy.random.seed(0)
+    neurons = 20
     train_file = "approximation_train_1.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
