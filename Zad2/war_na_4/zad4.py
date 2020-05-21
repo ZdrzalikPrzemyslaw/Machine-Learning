@@ -245,7 +245,7 @@ def generate_random_points_in_range(x_min, x_max, y_min, y_max):
 def main():
     NUMBER_OF_CENTROIDS = 2
     NUMBER_OF_EPOCH = 14
-
+    
     kMean = KMean(points_matrix=create_points("../war_na_3/Danetestowe.txt", is_comma=True),
                   number_of_centroids=NUMBER_OF_CENTROIDS, number_of_epoch=NUMBER_OF_EPOCH)
 

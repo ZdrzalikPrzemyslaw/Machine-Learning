@@ -133,10 +133,12 @@ dmypy.json
 PlotnijSe.py
 wierzcholki_wielokata.txt
 punkty.txt
-
+#Karol
 #vs code
 .vscode/
 
 #png i gif
 *.png
 *.gif
+
+test.txt
