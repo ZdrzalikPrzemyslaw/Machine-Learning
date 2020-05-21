@@ -99,7 +99,7 @@ class KohonenOrNeuralGas:
                     smallest_index = np.argmin(distance_map_not_sleeping)
                     for j in range(len(map_not_sleeping)):
                         map_not_sleeping[j] = map_not_sleeping[j] + self.current_alfa \
-                                              * self.euclidean_func(self.map[smallest_index], self.map[j]) * (
+                                              * self.gauss_neighbourhood_function(self.map[smallest_index], self.map[j]) * (
                                                           i - map_not_sleeping[j])
 
                     for j in range(len(map_not_sleeping)):
@@ -162,7 +162,7 @@ class KohonenOrNeuralGas:
 
     # funkcja okreslajaca wspolczynnik zwiazany z odleglością punktów od zwycieskiego
     # dla metody euklidesowej w Kohonenie
-    def euclidean_func(self, pos_closest, pos_checked):
+    def gauss_neighbourhood_function(self, pos_closest, pos_checked):
         return np.exp(
             -distance.euclidean(pos_checked, pos_closest) ** 2 / (2 * (self.current_neighbourhood_radius ** 2)))
 
@@ -256,10 +256,10 @@ def plot(list2d, list2d2=None):
 
 
 def main():
-    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Zad2\war_na_3\Danetestowe.txt", is_comma=True),
-                                 neuron_num=50,
-                                 is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=2,
-                                 min_potential=0.75, alfa=0.5)
+    kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("Danetestowe.txt", is_comma=True),
+                                 neuron_num=100,
+                                 is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.5,
+                                 min_potential=0.75, alfa=1.5)
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))
     kohonen.train()
     # plot(kohonen.map, read_2d_float_array_from_file("Danetestowe.txt", is_comma=True))

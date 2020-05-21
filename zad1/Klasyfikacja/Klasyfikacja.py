@@ -4,9 +4,9 @@ import time
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.2
+eta = 0.1
 # momentum
-alfa = 0.1
+alfa = 0.7
 
 
 class NeuralNetwork:
@@ -80,8 +80,7 @@ class NeuralNetwork:
         # łaczymy wejścia i oczekiwane wyjścia żeby móc zrobić ładne losowanie
         joined_arrays = numpy.vstack((inputs.T, expected_outputs.T)).T
         for it in range(epoch_count):
-
-            # Losujemy kolejność : D
+            # Losujemy kolejność
             numpy.random.shuffle(joined_arrays)
             # dzielimy na 2 macierze, wejść i oczekiwanych wyjść
             joined_arrays_left = joined_arrays[:, :-1]
@@ -100,10 +99,10 @@ class NeuralNetwork:
             # iteracja w danej epoce
             ite = 0
 
-            for k, j in zip(joined_arrays_left, joined_arrays_right):
+            for input_data, expected_outputs in zip(joined_arrays_left, joined_arrays_right):
 
                 # wyliczamy wyjścia z obu warstw
-                hidden_layer_output, output_layer_output = self.calculate_outputs(k)
+                hidden_layer_output, output_layer_output = self.calculate_outputs(input_data)
 
                 # SPAGHETTI CODE HERE
                 # generalnie to można było zrobić tyle razy lepiej ale jest tak
@@ -116,17 +115,17 @@ class NeuralNetwork:
                 # więc otrzymamy wektor wyników [~0, ~0, ~1]
                 # więc by policzyć odpowiedni błąd oczekiwane wyniki muszą być w formacie
                 # [0, 0, 1] i tak jest.
-                old_j = j
-                if j == 1:
-                    j = numpy.asarray([1, 0, 0])
+                old_j = expected_outputs
+                if expected_outputs == 1:
+                    expected_outputs = numpy.asarray([1, 0, 0])
                     correct_0_amount += 1
-                elif j == 2:
-                    j = numpy.asarray([0, 1, 0])
+                elif expected_outputs == 2:
+                    expected_outputs = numpy.asarray([0, 1, 0])
                     correct_1_amount += 1
-                elif j == 3:
-                    j = numpy.asarray([0, 0, 1])
+                elif expected_outputs == 3:
+                    expected_outputs = numpy.asarray([0, 0, 1])
                     correct_2_amount += 1
-                if numpy.argmax(j, axis=0) == numpy.argmax(output_layer_output, axis=0):
+                if numpy.argmax(expected_outputs, axis=0) == numpy.argmax(output_layer_output, axis=0):
                     correct_all += 1
                     if old_j == 1:
                         correct_0 += 1
@@ -135,8 +134,8 @@ class NeuralNetwork:
                     if old_j == 3:
                         correct_2 += 1
                 # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
-                output_error = output_layer_output - j
-                # suma kwadratów
+                output_error = output_layer_output - expected_outputs
+                # błąd średniokwadratowy
                 mean_squared_error += output_error.dot(output_error) / 2
                 ite += 1
 
@@ -159,7 +158,7 @@ class NeuralNetwork:
 
                 hidden_layer_adjustment = []
                 for i in hidden_layer_delta:
-                    hidden_layer_adjustment.append(k * i)
+                    hidden_layer_adjustment.append(input_data * i)
                 hidden_layer_adjustment = numpy.asarray(hidden_layer_adjustment)
 
                 # jeżeli wybraliśmy żeby istniał bias to teraz go modyfikujemy
@@ -247,7 +246,7 @@ def plot_file(name="mean_squared_error.txt"):
         plt.xlabel('Epoka')
         plt.ylabel('Wartość błędu')
         plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
-        plt.plot(values, 'o', markersize=1)
+        plt.plot(values, markersize=1)
     plt.show()
 
 
@@ -268,37 +267,36 @@ def main():
     numpy.random.seed(0)
 
     # neurony w warstwie ukrytej, wyjścia, wejścia, bias
-    siec = NeuralNetwork(10, 3, 4, True)
-    print(siec)
-    # dane wejściowe, dane wyjściowe, ilość iteracji
-    siec.train(read_2d_float_array_from_file("classification_train.txt")[:, :-1],
+    siec = NeuralNetwork(5, 3, 1, True)
+
+    siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt"), [0, 1, 2], 1)[:, :-1],
                read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
 
     plot_file()
     plot_file("correct_assigment.txt")
     # sprawdzenie dla zbioru testowego
-    correct_amount = 0
-    all_1 = [0, 0, 0]
-    all_2 = [0, 0, 0]
-    all_3 = [0, 0, 0]
-    it = 0
-    for i in read_2d_float_array_from_file("classification_test.txt")[:, :]:
-        obliczone = numpy.argmax(siec.calculate_outputs(i[:-1])[1], axis=0)
-        if i[-1:] == 1:
-            all_1[obliczone] += 1
-        elif i[-1:] == 2:
-            all_2[obliczone] += 1
-        elif i[-1:] == 3:
-            all_3[obliczone] += 1
-        if numpy.argmax(siec.calculate_outputs(i[:-1])[1], axis=0) == i[-1:] - 1:
-            correct_amount += 1
-        it += 1
-    print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
-    print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
-    print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
-    print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
-    print("ILOŚC Wszystkich: ", it)
-    print("ILOŚć Odgadnietych: ", correct_amount)
+    # correct_amount = 0
+    # all_1 = [0, 0, 0]
+    # all_2 = [0, 0, 0]
+    # all_3 = [0, 0, 0]
+    # it = 0
+    # for i in read_2d_float_array_from_file("classification_test.txt")[:, :]:
+    #     obliczone = numpy.argmax(siec.calculate_outputs(i[:-1])[1], axis=0)
+    #     if i[-1:] == 1:
+    #         all_1[obliczone] += 1
+    #     elif i[-1:] == 2:
+    #         all_2[obliczone] += 1
+    #     elif i[-1:] == 3:
+    #         all_3[obliczone] += 1
+    #     if numpy.argmax(siec.calculate_outputs(i[:-1])[1], axis=0) == i[-1:] - 1:
+    #         correct_amount += 1
+    #     it += 1
+    # print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
+    # print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
+    # print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
+    # print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
+    # print("ILOŚC Wszystkich: ", it)
+    # print("ILOŚć Odgadnietych: ", correct_amount)
 
 
 if __name__ == "__main__":

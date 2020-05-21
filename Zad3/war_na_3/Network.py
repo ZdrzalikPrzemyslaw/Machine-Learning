@@ -23,12 +23,31 @@ class NeuralNetwork:
         return "hidden_layer (wiersze - neurony) :\n" + str(
             self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer)
 
-    def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, number_of_inputs, is_bias):
+    def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, is_bias, input_data, expected_outputs):
         # czy uruchomilismy bias
         self.is_bias = is_bias
+
+        self.input_data = input_data
+        self.expected_outputs = expected_outputs
+
+        # Pozycja centrów ma być losowana z wektórów wejściowych
+        input_data_random_order = numpy.vstack((self.input_data, self.expected_outputs)).T
+        numpy.random.shuffle(input_data_random_order)
+
         # warstwy ukryta i wyjściowa oraz odpowiadające im struktury zapisujące zmianę wagi w poprzedniej iteracji, używane do momentum
-        self.hidden_layer = (2 * numpy.random.random((number_of_inputs, number_of_neurons_hidden_layer)).T - 1)
-        self.delta_weights_hidden_layer = numpy.zeros((number_of_inputs, number_of_neurons_hidden_layer)).T
+        self.hidden_layer = numpy.zeros((len(input_data_random_order[0]), number_of_neurons_hidden_layer)).T
+
+        # ustawiamy n neuronom ich centra jako n pierwszych danych wejściowych (po przelosowaniu danych wejsciowych)
+        for i in range(numpy.size(self.hidden_layer, 0)):
+            self.hidden_layer[i] = input_data_random_order[i]
+        print(self.hidden_layer)
+
+        self.scale_coefficient = numpy.zeros(numpy.size(self.hidden_layer, 0))
+        # TODO tutaj brakuje funkcji która liczy te współczynniki
+
+        self.delta_weights_hidden_layer = numpy.zeros((len(input_data_random_order[0]),
+                                                       number_of_neurons_hidden_layer)).T
+
         self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)).T - 1
         self.delta_weights_output_layer = numpy.zeros((number_of_neurons_hidden_layer, number_of_neurons_output)).T
         # jesli wybralismy że bias ma byc to tworzymy dla każdej warstwy wektor wag biasu
@@ -66,67 +85,20 @@ class NeuralNetwork:
 
     # trening, tyle razy ile podamy epochów
     # dla każdego epochu shufflujemy nasze macierze i przechodzimy przez nie po każdym wierszu z osobna
-    def train(self, inputs, expected_outputs, epoch_count):
+    def train(self, epoch_count):
         error_list = []
         for it in range(epoch_count):
 
             # Shuffle once each iteration
-            joined_arrays = numpy.vstack((inputs, expected_outputs)).T
+            joined_arrays = numpy.vstack((self.input_data, self.expected_outputs)).T
             numpy.random.shuffle(joined_arrays)
             joined_arrays_left, joined_arrays_right = numpy.hsplit(joined_arrays, 2)
             mean_squared_error = 0
             ite = 0
 
             for k, j in zip(joined_arrays_left, joined_arrays_right):
-
-                hidden_layer_output, output_layer_output = self.calculate_outputs(k)
-
-                # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
-                output_error = output_layer_output - j
-                mean_squared_error += output_error.dot(output_error) / 2
                 ite += 1
-
-                # output_delta - współczynnik zmiany wagi dla warstwy wyjściowej. Otrzymujemy jeden współczynnik dla każdego neronu.
-                # aby potem wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
-                # Pochodna funkcji liniowej = 1
-                output_delta = output_error * 1
-
-                # korzystamy z wcześniej otrzymanego współczynniku błędu aby wyznaczyć błąd dla warstwy ukrytej
-                hidden_layer_error = output_delta.T.dot(self.output_layer)
-                # jak dla warstwy wyjściowej hidden_layer_delta jest jeden dla każdego neuronu i
-                # aby wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
-                hidden_layer_delta = hidden_layer_error * self.sigmoid_fun_deriative(hidden_layer_output)
-
-                output_layer_adjustment = []
-                for i in output_delta:
-                    output_layer_adjustment.append(hidden_layer_output * i)
-                output_layer_adjustment = numpy.asarray(output_layer_adjustment)
-
-                hidden_layer_adjustment = []
-                for i in hidden_layer_delta:
-                    hidden_layer_adjustment.append(k * i)
-                hidden_layer_adjustment = numpy.asarray(hidden_layer_adjustment)
-
-                # jeżeli wybraliśmy żeby istniał bias to teraz go modyfikujemy
-                if self.is_bias:
-                    hidden_bias_adjustment = eta * hidden_layer_delta + alfa * self.bias_hidden_layer_delta
-                    output_bias_adjustment = eta * output_delta + alfa * self.bias_output_layer_delta
-                    self.bias_hidden_layer -= hidden_bias_adjustment
-                    self.bias_output_layer -= output_bias_adjustment
-                    self.bias_hidden_layer_delta = hidden_bias_adjustment
-                    self.bias_output_layer_delta = output_bias_adjustment
-
-                # wyliczamy zmianę korzystając z współczynnika uczenia i momentum
-                hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
-                output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
-
-                # modyfikujemy wagi w warstwach
-                self.hidden_layer -= hidden_layer_adjustment
-                self.output_layer -= output_layer_adjustment
-
-                # zapisujemy zmianę wag by użyć ją w momentum
-                self.delta_weights_hidden_layer = hidden_layer_adjustment
-                self.delta_weights_output_layer = output_layer_adjustment
+                mean_squared_error += self.epoch(k, j)
 
             mean_squared_error = mean_squared_error / ite
             error_list.append(mean_squared_error)
@@ -135,6 +107,39 @@ class NeuralNetwork:
         with open("mean_squared_error.txt", "w") as file:
             for i in error_list:
                 file.write(str(i) + "\n")
+
+    def epoch(self, k, j):
+        hidden_layer_output, output_layer_output = self.calculate_outputs(k)
+
+        # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
+        output_error = output_layer_output - j
+        mean_squared_error = output_error.dot(output_error) / 2
+
+        # output_delta - współczynnik zmiany wagi dla warstwy wyjściowej. Otrzymujemy jeden współczynnik dla każdego neronu.
+        # aby potem wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
+        # Pochodna funkcji liniowej = 1
+        output_delta = output_error * 1
+
+        output_layer_adjustment = []
+        for i in output_delta:
+            output_layer_adjustment.append(hidden_layer_output * i)
+        output_layer_adjustment = numpy.asarray(output_layer_adjustment)
+
+        # jeżeli wybraliśmy żeby istniał bias to teraz go modyfikujemy
+        if self.is_bias:
+            output_bias_adjustment = eta * output_delta + alfa * self.bias_output_layer_delta
+            self.bias_output_layer -= output_bias_adjustment
+            self.bias_output_layer_delta = output_bias_adjustment
+
+        output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
+
+        # modyfikujemy wagi w warstwach
+        self.output_layer -= output_layer_adjustment
+
+        # zapisujemy zmianę wag by użyć ją w momentum
+        self.delta_weights_output_layer = output_layer_adjustment
+
+        return mean_squared_error
 
 
 # otwieramy plik errorów i go plotujemy
@@ -180,22 +185,21 @@ def read_2d_float_array_from_file(file_name):
 def main():
     numpy.random.seed(0)
     neurons = 7
-    # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, 1, True)
     train_file = "approximation_train_1.txt"
-    iterations = 1000
-    # dane wejściowe, dane wyjściowe, ilość epochów
-    siec.train(read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1],
-               iterations)
-    plot_file()
-    counter = 0
-    blad = 0
-    for i in read_2d_float_array_from_file("approximation_test.txt"):
-        blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
-        counter += 1
-    blad = blad / counter
-    plot_function(siec, train_file, neurons, numpy.sort(read_2d_float_array_from_file("approximation_test.txt")[:, 0]))
-    print("BLAD ", blad)
+    # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
+    siec = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1])
+    # iterations = 1000
+    # # dane wejściowe, dane wyjściowe, ilość epochów
+    # siec.train(iterations)
+    # plot_file()
+    # counter = 0
+    # blad = 0
+    # for i in read_2d_float_array_from_file("approximation_test.txt"):
+    #     blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
+    #     counter += 1
+    # blad = blad / counter
+    # plot_function(siec, train_file, neurons, numpy.sort(read_2d_float_array_from_file("approximation_test.txt")[:, 0]))
+    # print("BLAD ", blad)
 
 
 if __name__ == "__main__":

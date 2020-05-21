@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import datetime
 
 from scipy.spatial import distance
 
@@ -168,11 +169,11 @@ class KohonenOrNeuralGas:
     # nauka + liczymy błędy kwantyzacji
     def train(self):
         for i in range(self.epoch_count):
-            self.calculate_quantization_error()
-            print("current_quant_error = ", self.quantization_error_list[i])
+            # self.calculate_quantization_error()
+            # print("current_quant_error = ", self.quantization_error_list[i])
             self.epoch()
-        self.calculate_quantization_error()
-        print("current_quant_error = ", self.quantization_error_list[-1])
+        # self.calculate_quantization_error()
+        # print("current_quant_error = ", self.quantization_error_list[-1])
 
     # obliczanie błędu kwantyzacji ze wzoru
     def calculate_quantization_error(self):
@@ -237,17 +238,22 @@ def save_new_picture(image, kohonen):
             if (i * 100) / size_x > percent:
                 percent += 1
                 print("Currently ", (i * 100) / size_x, "% done (writing to file)")
-        image.save('SUPEROBRAZEK.png')
+        image.save('SUPEROBRAZEK.jpg')
 
 
 def main():
-    im = Image.open('12-Angry-Men-The-Jurors-700x525.jpg')
+    im = Image.open('96254003_1093354737688229_8413853499938308096_n.jpg')
     kohonen = KohonenOrNeuralGas(input_matrix=image_pixels_to_array(im),
                                  neuron_num=16,
                                  is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1.5,
                                  min_potential=0, alfa=0.8)
+
+    a = datetime.datetime.now()
     kohonen.train()
+    b = datetime.datetime.now()
     save_new_picture(im, kohonen)
+    c = b - a
+    print(c)
 
 
 if __name__ == '__main__':
