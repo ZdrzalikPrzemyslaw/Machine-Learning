@@ -79,7 +79,6 @@ class NeuralNetwork:
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
     # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     def calculate_outputs(self, inputs):
-        #Todo: sposób wyliczania wartosci z hidden layer
         hidden_layer_output = []
         for i in range(numpy.size(self.hidden_layer, 0)):
             value = numpy.exp(-((distance.euclidean(self.hidden_layer[i], inputs) ** 2) /
