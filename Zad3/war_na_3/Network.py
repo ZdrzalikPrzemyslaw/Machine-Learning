@@ -137,7 +137,8 @@ class NeuralNetwork:
             error_list.append(mean_squared_error)
         print("OSTATNI BLAD", error_list[-1])
         # po przejściu przez wszystkie epoki zapisujemy błędy średniokwadratowe do pliku
-        with open("mean_squared_error.txt", "w") as file:
+        # with open("mean_squared_error.txt", "w") as file:
+        with open("Zad3/war_na_3/mean_squared_error.txt", "w") as file:
             for i in error_list:
                 file.write(str(i) + "\n")
 
@@ -180,7 +181,9 @@ class NeuralNetwork:
 
 # otwieramy plik errorów i go plotujemy
 def plot_file():
-    with open("mean_squared_error.txt", "r") as file:
+    # with open(mean_squared_error.txt", "r") as file:
+    # inna sciezka
+    with open("Zad3/war_na_3/mean_squared_error.txt", "r") as file:
         lines = file.read().splitlines()
     values = []
     for i in lines:
@@ -224,7 +227,10 @@ def read_2d_float_array_from_file(file_name):
 def main():
     # numpy.random.seed(0)
     neurons = 20
-    train_file = "approximation_train_1.txt"
+    # train_file = "approximation_train_1.txt"
+    #musze zmienic pewnie przez vs code
+    train_file = "Zad3/war_na_3/approximation_train_1.txt"
+    test_file = "Zad3/war_na_3/approximation_test.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
                          read_2d_float_array_from_file(train_file)[:, 1])
@@ -238,7 +244,7 @@ def main():
     #     blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
     #     counter += 1
     # blad = blad / counter
-    values = read_2d_float_array_from_file("approximation_test.txt")
+    values = read_2d_float_array_from_file(test_file)
     values2 = numpy.zeros_like(values)
     indexes = numpy.argsort(values[:, 0])
     for i in range(len(indexes)):

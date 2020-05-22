@@ -269,9 +269,10 @@ def main():
     # neurony w warstwie ukrytej, wyjścia, wejścia, bias
     siec = NeuralNetwork(5, 3, 1, True)
 
-    siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt"), [0, 1, 2], 1)[:, :-1],
-               read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
-
+    # siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt"), [0, 1, 2], 1)[:, :-1],
+    #            read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
+    siec.train(numpy.delete(read_2d_float_array_from_file("zad1/Klasyfikacja/classification_train.txt"), [0, 1, 2], 1)[:, :-1],
+               read_2d_float_array_from_file("zad1/Klasyfikacja/classification_train.txt")[:, -1:], 1000)
     plot_file()
     plot_file("correct_assigment.txt")
     # sprawdzenie dla zbioru testowego
