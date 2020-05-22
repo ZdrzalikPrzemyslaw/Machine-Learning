@@ -147,3 +147,4 @@ test.txt
 *.zipp
 *.tmp
 war_na_3/mean_squared_error.txt
+mean_squared_error.txt

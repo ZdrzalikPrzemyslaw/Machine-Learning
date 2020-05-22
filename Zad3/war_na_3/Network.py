@@ -208,8 +208,8 @@ def read_2d_float_array_from_file(file_name):
 
 def main():
     numpy.random.seed(0)
-    neurons = 20
-    train_file = "approximation_train_1.txt"
+    neurons = 2
+    train_file = "Zad3/war_na_3/approximation_test.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
                          read_2d_float_array_from_file(train_file)[:, 1])
@@ -223,7 +223,7 @@ def main():
     #     blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
     #     counter += 1
     # blad = blad / counter
-    values = read_2d_float_array_from_file("approximation_test.txt")
+    values = read_2d_float_array_from_file("Zad3/war_na_3/approximation_test.txt")
     values2 = numpy.zeros_like(values)
     indexes = numpy.argsort(values[:, 0])
     for i in range(len(indexes)):
