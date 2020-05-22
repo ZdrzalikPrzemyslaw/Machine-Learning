@@ -9,12 +9,12 @@ eta = 0.1
 alfa = 0
 
 
-
 class NeuralNetwork:
     def __repr__(self):
         return "Instance of NeuralNetwork"
 
     def __str__(self):
+        # todo: zaktualizuj to_string()
         if self.is_bias:
             return "hidden_layer (wiersze - neurony) :\n" + str(
                 self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(
@@ -24,17 +24,20 @@ class NeuralNetwork:
             self.hidden_layer) + "\noutput_layer (wiersze - neurony) :\n" + str(self.output_layer)
 
     def __init__(self, number_of_neurons_hidden_layer, number_of_neurons_output, is_bias, input_data, expected_outputs):
-        # czy uruchomilismy bias
+        # czy uruchomilismy bias, bias aktualnie nie jest zaimplementowany dla warstwy radialnej
         self.is_bias = is_bias
 
+        # dane wejsciowe
         self.input_data = input_data
         self.expected_outputs = expected_outputs
 
         # Pozycja centrów ma być losowana z wektórów wejściowych
+        # Laczymy dane wejsciowe i expected outputs żeby móc je razem przelosować i zachować łączność danych
         input_data_random_order = numpy.vstack((self.input_data, self.expected_outputs)).T
         numpy.random.shuffle(input_data_random_order)
 
-        # warstwy ukryta i wyjściowa oraz odpowiadające im struktury zapisujące zmianę wagi w poprzedniej iteracji, używane do momentum
+        # wtworzymy wagi dla warstwy wejsciowej, najpierw tworzymy macierz o jakim chcemy rozmiarze
+
         self.hidden_layer = numpy.zeros((len(input_data_random_order[0, :-1]), number_of_neurons_hidden_layer)).T
 
         # ustawiamy n neuronom ich centra jako n pierwszych danych wejściowych (po przelosowaniu danych wejsciowych)
@@ -42,16 +45,22 @@ class NeuralNetwork:
             self.hidden_layer[i] = input_data_random_order[i, :-1]
         # print(self.hidden_layer)
 
+        # Ustawiamy sigmy początkowo na 1
         self.scale_coefficient = numpy.ones(numpy.size(self.hidden_layer, 0))
+
+        # Szukamy sigm ze wzoru
         self.find_sigma()
         # print(self.scale_coefficient)
 
-        self.delta_weights_hidden_layer = numpy.ones((len(input_data_random_order[0]),
-                                                      number_of_neurons_hidden_layer)).T
+        # delty dla momentum, aktualnie nie uczymy wsteczną propagacją warstwy ukrytej więc nie używamy
+        self.delta_weights_hidden_layer = numpy.zeros((len(input_data_random_order[0]),
+                                                       number_of_neurons_hidden_layer)).T
 
+        # tworzymy warstwę wyjściową z losowymi wagami od -1 do 1, jak w zad 1
         self.output_layer = 2 * numpy.random.random((number_of_neurons_hidden_layer, number_of_neurons_output)).T - 1
         # print(self.output_layer)
         self.delta_weights_output_layer = numpy.zeros((number_of_neurons_hidden_layer, number_of_neurons_output)).T
+
         # jesli wybralismy że bias ma byc to tworzymy dla każdej warstwy wektor wag biasu
         if is_bias:
             self.bias_hidden_layer = (2 * numpy.random.random(number_of_neurons_hidden_layer) - 1)
@@ -65,17 +74,18 @@ class NeuralNetwork:
         self.bias_hidden_layer_delta = numpy.zeros(number_of_neurons_hidden_layer)
 
     # Wzór funkcji
-    def sigmoid_fun(self, inputcik):
-        return 1 / (1 + numpy.exp(-inputcik))
+    # def sigmoid_fun(self, inputcik):
+    #     return 1 / (1 + numpy.exp(-inputcik))
 
     # interesujące jest to, że według mojej wiedzy te wzory są równe sobie a dają dość bardzo różne wyniki w niektórych przypadkach
     # z wolfram alpha
     # def sigmoid_fun_deriative(self, inputcik):
     #     return numpy.exp(-inputcik) /  ((numpy.exp(-inputcik) + 1) ** 2)
 
-    def sigmoid_fun_deriative(self, inputcik):
-        return inputcik * (1 - inputcik)
+    # def sigmoid_fun_deriative(self, inputcik):
+    #     return inputcik * (1 - inputcik)
 
+    # szukamy sigm ze wzorów dla każdego neuronu radialnego
     def find_sigma(self):
         pass
         for i in range(numpy.size(self.hidden_layer, 0)):
@@ -88,16 +98,20 @@ class NeuralNetwork:
                 max_dist / (numpy.sqrt(2 * numpy.size(self.hidden_layer, 0)))
 
     # najpierw liczymy wynik z warstwy ukrytej i potem korzystając z niego liczymy wynik dla neuronów wyjścia
-    # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
+    # Jak wiadomo bias to przesunięcie wyniku o stałą więc jeżeli wybraliśmy
+    # że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
+    # bias istnieje tylko dla output layer aktualnie
     def calculate_outputs(self, inputs):
         hidden_layer_output = []
         # todo bias
         for i in range(numpy.size(self.hidden_layer, 0)):
+            # ze wzoru, prezentacja 6, koło 20 strony, wynik dla warstwy radialnej
             dist = (distance.euclidean(self.hidden_layer[i], inputs) ** 2)
             denominator = 2 * (self.scale_coefficient[i] ** 2)
             value = numpy.exp(-1 * (dist / denominator))
 
             hidden_layer_output.append(value)
+        # wynik dla warstwy wyjsciowej
         output_layer_output = numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer
         return hidden_layer_output, output_layer_output
 
@@ -116,6 +130,7 @@ class NeuralNetwork:
 
             for k, j in zip(joined_arrays_left, joined_arrays_right):
                 ite += 1
+                # epoka zwraca błąd
                 mean_squared_error += self.epoch(k, j)
 
             mean_squared_error = mean_squared_error / ite
@@ -207,13 +222,13 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    numpy.random.seed(0)
+    # numpy.random.seed(0)
     neurons = 20
     train_file = "approximation_train_1.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
                          read_2d_float_array_from_file(train_file)[:, 1])
-    iterations = 1000
+    iterations = 100
     # dane wejściowe, dane wyjściowe, ilość epochów
     siec.train(iterations)
     plot_file()
