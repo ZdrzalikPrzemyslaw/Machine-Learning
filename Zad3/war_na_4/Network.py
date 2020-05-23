@@ -157,8 +157,9 @@ class NeuralNetwork:
             for k, j in zip(joined_arrays_left, joined_arrays_right):
                 ite += 1
                 # epoka zwraca błąd
+                # TODO to jest bezsensu ten if
                 if self.is_aproximation:
-                    mean_squared_error_from_epoch = self.epoch(k, j)
+                    mean_squared_error_from_epoch, class_of_object, is_classified = self.epoch(k, j)
                 else:
                     mean_squared_error_from_epoch, class_of_object, is_classified = self.epoch(k, j)
                     if is_classified:
@@ -287,48 +288,55 @@ def read_2d_float_array_from_file(file_name):
 def main():
     numpy.random.seed(0)
     neurons = 20
-    train_file = "classification_train.txt"
-    test_file = "classification_test.txt"
+    train_file = "approximation_train_1.txt"
+    test_file = "approximation_test.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 2],
-                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
+    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, -2],
+                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=True)
     iterations = 200
     siec.train(iterations)
     plot_file()
     if not siec.is_aproximation:
         siec.plot_classification()
 
-    correct_amount = 0
-    all_1 = [0, 0, 0]
-    all_2 = [0, 0, 0]
-    all_3 = [0, 0, 0]
-    it = 0
-    for i in read_2d_float_array_from_file("classification_test.txt")[:, :]:
-        obliczone = siec.calculate_outputs(i[2])[1]
-        classa = 0
-        if obliczone - 1 <= 0.5:
-            classa = 1
-        elif obliczone - 2 <= 0.5:
-            classa = 2
-        elif obliczone - 3 <= 0.5:
-            classa = 3
+        correct_amount = 0
+        all_1 = [0, 0, 0]
+        all_2 = [0, 0, 0]
+        all_3 = [0, 0, 0]
+        it = 0
+        for i in read_2d_float_array_from_file(test_file)[:, :]:
+            obliczone = siec.calculate_outputs(i[3])[1]
+            classa = 0
+            if obliczone - 1 <= 0.5:
+                classa = 1
+            elif obliczone - 2 <= 0.5:
+                classa = 2
+            elif obliczone - 3 <= 0.5:
+                classa = 3
 
-        if i[-1] == classa:
-            correct_amount += 1
+            if i[-1] == classa:
+                correct_amount += 1
 
-        if i[-1] == 1:
-            all_1[classa - 1] += 1
-        elif i[-1] == 2:
-            all_2[classa - 1] += 1
-        elif i[-1] == 3:
-            all_3[classa - 1] += 1
-        it += 1
-    print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
-    print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
-    print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
-    print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
-    print("ILOŚC Wszystkich: ", it)
-    print("ILOŚć Odgadnietych: ", correct_amount)
+            if i[-1] == 1:
+                all_1[classa - 1] += 1
+            elif i[-1] == 2:
+                all_2[classa - 1] += 1
+            elif i[-1] == 3:
+                all_3[classa - 1] += 1
+            it += 1
+        print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
+        print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
+        print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
+        print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
+        print("ILOŚC Wszystkich: ", it)
+        print("ILOŚć Odgadnietych: ", correct_amount)
+    else:
+        values = read_2d_float_array_from_file(test_file)
+        values2 = numpy.zeros_like(values)
+        indexes = numpy.argsort(values[:, 0])
+        for i in range(len(indexes)):
+            values2[i] = values[indexes[i]]
+        plot_function(siec, train_file, neurons, values2)
 
 
 if __name__ == "__main__":
