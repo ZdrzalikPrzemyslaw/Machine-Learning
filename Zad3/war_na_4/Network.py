@@ -310,7 +310,7 @@ def main():
     test_file = "classification_test.txt"
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, :-1],
+    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, :-1],
                          read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
     iterations = 100
     siec.train(iterations)
@@ -323,7 +323,7 @@ def main():
         all_2 = [0, 0, 0]
         all_3 = [0, 0, 0]
         it = 0
-        if len(siec.hidden_layer) == 3:
+        if len(siec.output_layer) == 3:
             for i in read_2d_float_array_from_file(train_file)[:, :]:
                 obliczone = siec.calculate_outputs(i[:-1])[1]
                 if i[-1] == 1:
