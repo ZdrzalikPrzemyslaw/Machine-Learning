@@ -71,7 +71,6 @@ class NeuralNetwork:
         # TODO: dirty fix
         self.num_of_neurons_hid_layer = len(self.hidden_layer)
 
-
         # Szukamy sigm ze wzoru
         self.find_sigma()
         # print(self.scale_coefficient)
@@ -181,13 +180,17 @@ class NeuralNetwork:
     def epoch(self, k, j):
         join_k_j = numpy.concatenate((k, j), axis=None)
         # print(join_k_j)
+        # TODO: BRZYDKIE
+        possible_outputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         class_of_object = int(j[0]) - 1
+        j = possible_outputs[int(j) - 1]
         hidden_layer_output, output_layer_output = self.calculate_outputs(k)
+
         # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
         output_error = output_layer_output - j
 
         is_classified = False
-        if abs(output_error) <= CLASSYFICATION_ERROR_MARGIN:
+        if (numpy.argmax(output_layer_output)) == numpy.argmax(j):
             is_classified = True
 
         mean_squared_error = output_error.dot(output_error) / 2
@@ -223,24 +226,26 @@ class NeuralNetwork:
     def plot_classification(self):
         values1 = []
         for i in self.correct_class_vector[0]:
-            values1.append(i/self.amount_of_class[0][0])
+            values1.append(i / self.amount_of_class[0][0])
         values2 = []
         for i in self.correct_class_vector[1]:
-            values2.append(i/self.amount_of_class[1][0])
+            values2.append(i / self.amount_of_class[1][0])
         values3 = []
         for i in self.correct_class_vector[2]:
-            values3.append(i/self.amount_of_class[2][0])
+            values3.append(i / self.amount_of_class[2][0])
         values = []
         for i, j, k in zip(self.correct_class_vector[0], self.correct_class_vector[1], self.correct_class_vector[2]):
-            values.append((i+j+k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
+            values.append(
+                (i + j + k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
         plt.xlabel('Epoka')
         plt.ylabel('Ilość popranych przyporządkowań')
-        plt.plot(values, 'o', markersize=1, label="Wszystkie obiekty")
-        plt.plot(values1, 'o', markersize=1, label="Obiekt 1")
-        plt.plot(values2, 'o', markersize=1, label="Obiekt 2")
-        plt.plot(values3, 'o', markersize=1, label="Obiekt 3")
+        plt.plot(values, 'o', markersize=2, label="Wszystkie obiekty")
+        plt.plot(values1, 'o', markersize=2, label="Obiekt 1")
+        plt.plot(values2, 'o', markersize=2, label="Obiekt 2")
+        plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
         plt.legend()
         plt.show()
+
 
 # otwieramy plik errorów i go plotujemy
 def plot_file():
@@ -288,19 +293,19 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    numpy.random.seed(0)
+    # numpy.random.seed(0)
     neurons = 20
-    train_file = "approximation_train_1.txt"
-    test_file = "approximation_test.txt"
-    # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, -2],
-                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=True)
+    train_file = "classification_train.txt"
+    test_file = "classification_test.txt"
+    # ilość neuronów, ilość wyjść, czy_bias
+    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, 3],
+                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
     iterations = 200
     siec.train(iterations)
     plot_file()
+    # TODO: fix if
+    siec.plot_classification()
     if not siec.is_aproximation:
-        siec.plot_classification()
-
         correct_amount = 0
         all_1 = [0, 0, 0]
         all_2 = [0, 0, 0]
@@ -308,23 +313,12 @@ def main():
         it = 0
         for i in read_2d_float_array_from_file(test_file)[:, :]:
             obliczone = siec.calculate_outputs(i[3])[1]
-            classa = 0
-            if obliczone - 1 <= 0.5:
-                classa = 1
-            elif obliczone - 2 <= 0.5:
-                classa = 2
-            elif obliczone - 3 <= 0.5:
-                classa = 3
-
-            if i[-1] == classa:
-                correct_amount += 1
-
             if i[-1] == 1:
-                all_1[classa - 1] += 1
+                all_1[numpy.argmax(obliczone)] += 1
             elif i[-1] == 2:
-                all_2[classa - 1] += 1
+                all_2[numpy.argmax(obliczone)] += 1
             elif i[-1] == 3:
-                all_3[classa - 1] += 1
+                all_3[numpy.argmax(obliczone)] += 1
             it += 1
         print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
         print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
@@ -332,7 +326,8 @@ def main():
         print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
         print("ILOŚC Wszystkich: ", it)
         print("ILOŚć Odgadnietych: ", correct_amount)
-    else:
+
+    elif siec.is_aproximation:
         values = read_2d_float_array_from_file(test_file)
         values2 = numpy.zeros_like(values)
         indexes = numpy.argsort(values[:, 0])
