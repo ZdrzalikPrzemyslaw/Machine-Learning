@@ -160,7 +160,7 @@ class NeuralNetwork:
                 # epoka zwraca błąd
                 # TODO to jest bezsensu ten if
                 if self.is_aproximation:
-                    mean_squared_error_from_epoch, class_of_object, is_classified = self.epoch(k, j)
+                    mean_squared_error_from_epoch = self.epoch(k, j)
                 else:
                     mean_squared_error_from_epoch, class_of_object, is_classified = self.epoch(k, j)
                     if is_classified:
@@ -181,9 +181,10 @@ class NeuralNetwork:
         join_k_j = numpy.concatenate((k, j), axis=None)
         # print(join_k_j)
         # TODO: BRZYDKIE
-        possible_outputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        class_of_object = int(j[0]) - 1
-        j = possible_outputs[int(j) - 1]
+        if not self.is_aproximation:
+            possible_outputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+            class_of_object = int(j[0]) - 1
+            j = possible_outputs[int(j) - 1]
         hidden_layer_output, output_layer_output = self.calculate_outputs(k)
 
         # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
@@ -221,7 +222,9 @@ class NeuralNetwork:
         # zapisujemy zmianę wag by użyć ją w momentum
         self.delta_weights_output_layer = output_layer_adjustment
 
-        return mean_squared_error, class_of_object, is_classified
+        if not self.is_aproximation:
+            return mean_squared_error, class_of_object, is_classified
+        return mean_squared_error
 
     def plot_classification(self):
         values1 = []
@@ -293,26 +296,27 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    # numpy.random.seed(0)
+    numpy.random.seed(0)
     neurons = 20
     train_file = "classification_train.txt"
     test_file = "classification_test.txt"
     # ilość neuronów, ilość wyjść, czy_bias
-    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, 3],
+    # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
+    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, :-1],
                          read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
-    iterations = 200
+    iterations = 100
     siec.train(iterations)
     plot_file()
     # TODO: fix if
-    siec.plot_classification()
     if not siec.is_aproximation:
+        siec.plot_classification()
         correct_amount = 0
         all_1 = [0, 0, 0]
         all_2 = [0, 0, 0]
         all_3 = [0, 0, 0]
         it = 0
-        for i in read_2d_float_array_from_file(test_file)[:, :]:
-            obliczone = siec.calculate_outputs(i[3])[1]
+        for i in read_2d_float_array_from_file(train_file)[:, :]:
+            obliczone = siec.calculate_outputs(i[:-1])[1]
             if i[-1] == 1:
                 all_1[numpy.argmax(obliczone)] += 1
             elif i[-1] == 2:
