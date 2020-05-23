@@ -10,6 +10,8 @@ eta = 0.1
 # momentum
 alfa = 0
 
+CLASSYFICATION_ERROR_MARGIN = 0.5
+
 
 class NeuralNetwork:
     def __repr__(self):
@@ -185,7 +187,7 @@ class NeuralNetwork:
         output_error = output_layer_output - j
 
         is_classified = False
-        if abs(output_error) <= 0.5:
+        if abs(output_error) <= CLASSYFICATION_ERROR_MARGIN:
             is_classified = True
 
         mean_squared_error = output_error.dot(output_error) / 2
