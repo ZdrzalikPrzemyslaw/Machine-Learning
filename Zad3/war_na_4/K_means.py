@@ -1,10 +1,10 @@
 import numpy as np
 
+from scipy.spatial import distance
+
 def get_distance(x, y):
-    sum = 0
-    for i in range(len(x)):
-        sum += (x[i] - y[i]) **2
-    return np.sqrt(sum)
+    return distance.euclidean(x, y)
+
 
 def kmeans(data, number_of_centers, max_ite):
     centroids = data[np.random.choice(range(len(data)), number_of_centers, replace=False)]
@@ -31,16 +31,16 @@ def kmeans(data, number_of_centers, max_ite):
 
         centroids = []
 
-        for i in range(len(cluster_list)):
-            centroids.append(np.mean(cluster_list[i], axis=0))
+        for i in cluster_list:
+            centroids.append(np.mean(i, axis=0))
 
         stop = np.abs(np.sum(previous_centroids) - np.sum(centroids))
-
         is_Stabilized = (stop < 0.001)
 
         current_ite += 1
 
-    return np.array(centroids)
+    return np.asarray(centroids)
+
 
 def read_2d_float_array_from_file(file_name):
     two_dim_list_of_return_values = []
@@ -52,17 +52,17 @@ def read_2d_float_array_from_file(file_name):
             one_dim_list.append(j)
         two_dim_list_of_return_values.append(one_dim_list)
     return np.asarray(two_dim_list_of_return_values)
+
+
 def main():
+    train_file = "classification_train.txt"
+    test_file = "classification_test.txt"
 
-    train_file = "Zad3/war_na_4/classification_train.txt"
-    test_file = "Zad3/war_na_4/classification_test.txt"
-    
     test = read_2d_float_array_from_file(train_file)
-    test = kmeans(test[:,0:4],10,200)
+    test = kmeans(test[:, 0:2], 10, 200)
 
-    
-    
     print("hello")
+
 
 if __name__ == '__main__':
     main()
