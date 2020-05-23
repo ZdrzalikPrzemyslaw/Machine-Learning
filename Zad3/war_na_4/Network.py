@@ -182,17 +182,25 @@ class NeuralNetwork:
         # print(join_k_j)
         # TODO: BRZYDKIE
         if not self.is_aproximation:
-            possible_outputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
             class_of_object = int(j[0]) - 1
-            j = possible_outputs[int(j) - 1]
+            if len(self.output_layer) == 3:
+                possible_outputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+                j = possible_outputs[int(j) - 1]
+            else:
+                pass
         hidden_layer_output, output_layer_output = self.calculate_outputs(k)
 
         # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
         output_error = output_layer_output - j
 
-        is_classified = False
-        if (numpy.argmax(output_layer_output)) == numpy.argmax(j):
-            is_classified = True
+        if not self.is_aproximation:
+            is_classified = False
+            if len(self.output_layer) == 3:
+                if (numpy.argmax(output_layer_output)) == numpy.argmax(j):
+                    is_classified = True
+            else:
+                if abs(output_error) <= CLASSYFICATION_ERROR_MARGIN:
+                    is_classified = True
 
         mean_squared_error = output_error.dot(output_error) / 2
 
@@ -302,7 +310,7 @@ def main():
     test_file = "classification_test.txt"
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, :-1],
+    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, :-1],
                          read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
     iterations = 100
     siec.train(iterations)
@@ -315,15 +323,37 @@ def main():
         all_2 = [0, 0, 0]
         all_3 = [0, 0, 0]
         it = 0
-        for i in read_2d_float_array_from_file(train_file)[:, :]:
-            obliczone = siec.calculate_outputs(i[:-1])[1]
-            if i[-1] == 1:
-                all_1[numpy.argmax(obliczone)] += 1
-            elif i[-1] == 2:
-                all_2[numpy.argmax(obliczone)] += 1
-            elif i[-1] == 3:
-                all_3[numpy.argmax(obliczone)] += 1
-            it += 1
+        if len(siec.hidden_layer) == 3:
+            for i in read_2d_float_array_from_file(train_file)[:, :]:
+                obliczone = siec.calculate_outputs(i[:-1])[1]
+                if i[-1] == 1:
+                    all_1[numpy.argmax(obliczone)] += 1
+                elif i[-1] == 2:
+                    all_2[numpy.argmax(obliczone)] += 1
+                elif i[-1] == 3:
+                    all_3[numpy.argmax(obliczone)] += 1
+                it += 1
+        else:
+            for i in read_2d_float_array_from_file(test_file)[:, :]:
+                obliczone = siec.calculate_outputs(i[:-1])[1]
+                classa = 0
+                if obliczone - 1 <= 0.5:
+                    classa = 1
+                elif obliczone - 2 <= 0.5:
+                    classa = 2
+                elif obliczone - 3 <= 0.5:
+                    classa = 3
+
+                if i[-1] == classa:
+                    correct_amount += 1
+
+                if i[-1] == 1:
+                    all_1[classa - 1] += 1
+                elif i[-1] == 2:
+                    all_2[classa - 1] += 1
+                elif i[-1] == 3:
+                    all_3[classa - 1] += 1
+                it += 1
         print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
         print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
         print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
