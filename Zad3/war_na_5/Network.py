@@ -154,7 +154,6 @@ class NeuralNetwork:
             derivatives.append(numpy.power(inputs[:, i], 2) / numpy.power(self.scale_coefficient, 3))
         return numpy.asarray(derivatives).sum(axis=0)
 
-
     # trening, tyle razy ile podamy epochów
     # dla każdego epochu shufflujemy nasze macierze i przechodzimy przez nie po każdym wierszu z osobna
     def train(self, epoch_count):
@@ -231,8 +230,7 @@ class NeuralNetwork:
                                    self.hidden_layer_deriative(k - self.hidden_layer)).T
 
         sigma_adjustment = (hidden_layer_output * hidden_layer_error *
-                                   self.hidden_layer_deriative_sigma(k - self.hidden_layer)).T
-
+                            self.hidden_layer_deriative_sigma(k - self.hidden_layer)).T
 
         output_layer_adjustment = []
         for i in output_delta:
@@ -251,7 +249,6 @@ class NeuralNetwork:
         output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
         hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
         sigma_adjustment = eta * sigma_adjustment + alfa * self.delta_scale_coefficient
-
 
         # modyfikujemy wagi w warstwach
         self.hidden_layer -= hidden_layer_adjustment
