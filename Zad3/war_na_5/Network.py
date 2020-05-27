@@ -8,9 +8,10 @@ from scipy.spatial import distance
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.1
+# TODO: przyjrzyj się jak te współczynniki wpływaja
+eta = 0.01
 # momentum
-alfa = 0
+alfa = 0.1
 
 CLASSYFICATION_ERROR_MARGIN = 0.5
 
@@ -254,6 +255,7 @@ class NeuralNetwork:
         self.hidden_layer -= hidden_layer_adjustment
         self.scale_coefficient -= sigma_adjustment
         self.output_layer -= output_layer_adjustment
+        # self.find_sigma()
 
         # zapisujemy zmianę wag by użyć ją w momentum
         self.delta_weights_hidden_layer = hidden_layer_adjustment
@@ -335,14 +337,14 @@ def read_2d_float_array_from_file(file_name):
 
 def main():
     numpy.random.seed(0)
-    neurons = 20
-    train_file = "classification_train.txt"
-    test_file = "classification_test.txt"
+    neurons = 7
+    train_file = "approximation_train_1.txt"
+    test_file = "approximation_test.txt"
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, :-1],
-                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
-    iterations = 100
+    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, :-1],
+                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=True)
+    iterations = 1000
     siec.train(iterations)
     plot_file()
     if not siec.is_aproximation:
