@@ -1,3 +1,5 @@
+import math
+
 import numpy
 
 import K_means as K_means
@@ -65,6 +67,7 @@ class NeuralNetwork:
 
         # Ustawiamy sigmy początkowo na 1
         self.scale_coefficient = numpy.ones(numpy.size(self.hidden_layer, 0))
+        self.delta_scale_coefficient = numpy.zeros_like(self.scale_coefficient)
 
         self.hidden_layer = K_means.kmeans(input_data, number_of_neurons_hidden_layer, 1000)
 
@@ -140,10 +143,17 @@ class NeuralNetwork:
 
     # TODO: To jest !CHYBA! różniczka zupełna
     def hidden_layer_deriative(self, inputs):
-        return - inputs * numpy.exp(-(inputs ** 2) / (2*self.scale_coefficient)) / (self.scale_coefficient ** 2)
+        derivatives = []
+        for i in range(len(inputs[0])):
+            derivatives.append(inputs[:, i] / numpy.power(self.scale_coefficient, 2))
+        return numpy.asarray(derivatives)
 
-    def sigma_delta(self, inputs):
-        return inputs ** 2 * numpy.exp(- ((-inputs) ** 2) / (2 * self.scale_coefficient ** 2)) / self.scale_coefficient ** 3
+    def hidden_layer_deriative_sigma(self, inputs):
+        derivatives = []
+        for i in range(len(inputs[0])):
+            derivatives.append(numpy.power(inputs[:, i], 2) / numpy.power(self.scale_coefficient, 3))
+        return numpy.asarray(derivatives).sum(axis=0)
+
 
     # trening, tyle razy ile podamy epochów
     # dla każdego epochu shufflujemy nasze macierze i przechodzimy przez nie po każdym wierszu z osobna
@@ -194,6 +204,7 @@ class NeuralNetwork:
             else:
                 pass
         hidden_layer_output, output_layer_output = self.calculate_outputs(k)
+        hidden_layer_output = numpy.asarray(hidden_layer_output)
 
         # błąd dla wyjścia to różnica pomiędzy oczekiwanym wynikiem a otrzymanym
         output_error = output_layer_output - j
@@ -214,63 +225,43 @@ class NeuralNetwork:
         # Pochodna funkcji liniowej = 1
         output_delta = output_error * 1
 
-        # korzystamy z wcześniej otrzymanego współczynniku błędu aby wyznaczyć błąd dla warstwy ukrytej
         hidden_layer_error = output_delta.T.dot(self.output_layer)
-        # jak dla warstwy wyjściowej hidden_layer_delta jest jeden dla każdego neuronu i
-        # aby wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
-        hidden_layer_output = numpy.asarray(hidden_layer_output)
-        hidden_layer_delta = hidden_layer_error * self.hidden_layer_deriative(hidden_layer_output)
-        # sigma_delta = hidden_layer_error * self.sigma_delta(hidden_layer_output)
-        # print(hidden_layer_delta)
 
-        # sigma_delta = hidden_layer_delta * self.sigma_deriative(hidden_layer_output)
-        # TODO to jest zle
-        hidden_layer_delta = numpy.asarray(hidden_layer_delta)
-        for i in range(len(hidden_layer_delta)):
-            hidden_layer_delta[i] = hidden_layer_delta[i] * self.hidden_layer[i]
+        hidden_layer_adjustment = (hidden_layer_output * hidden_layer_error *
+                                   self.hidden_layer_deriative(k - self.hidden_layer)).T
+
+        sigma_adjustment = (hidden_layer_output * hidden_layer_error *
+                                   self.hidden_layer_deriative_sigma(k - self.hidden_layer)).T
 
 
         output_layer_adjustment = []
-
         for i in output_delta:
             value = [i * j for j in hidden_layer_output]
             output_layer_adjustment.append(value)
         output_layer_adjustment = numpy.asarray(output_layer_adjustment)
 
-        hidden_layer_adjustment = []
-        for i in hidden_layer_delta:
-            hidden_layer_adjustment.append(k * i)
-        hidden_layer_adjustment = numpy.asarray(hidden_layer_adjustment)
-
-        # sigma_adj = (sum(k) * sigma_delta)
-        #
-
         # jeżeli wybraliśmy żeby istniał bias to teraz go modyfikujemy
         if self.is_bias:
-            hidden_bias_adjustment = eta * hidden_layer_delta + alfa * self.bias_hidden_layer_delta
             output_bias_adjustment = eta * output_delta + alfa * self.bias_output_layer_delta
-            self.bias_hidden_layer -= hidden_bias_adjustment
             self.bias_output_layer -= output_bias_adjustment
-            self.bias_hidden_layer_delta = hidden_bias_adjustment
             self.bias_output_layer_delta = output_bias_adjustment
 
         # wyliczamy zmianę korzystając z współczynnika uczenia i momentum
-        hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
+
         output_layer_adjustment = eta * output_layer_adjustment + alfa * self.delta_weights_output_layer
-        # TODO: dodac alfe
-        # sigma_adj = eta * sigma_adj
+        hidden_layer_adjustment = eta * hidden_layer_adjustment + alfa * self.delta_weights_hidden_layer
+        sigma_adjustment = eta * sigma_adjustment + alfa * self.delta_scale_coefficient
+
 
         # modyfikujemy wagi w warstwach
         self.hidden_layer -= hidden_layer_adjustment
+        self.scale_coefficient -= sigma_adjustment
         self.output_layer -= output_layer_adjustment
-        # self.scale_coefficient -= sigma_adj
-
-        self.find_sigma()
 
         # zapisujemy zmianę wag by użyć ją w momentum
         self.delta_weights_hidden_layer = hidden_layer_adjustment
         self.delta_weights_output_layer = output_layer_adjustment
-        # todo dodac sigma
+        self.delta_scale_coefficient = sigma_adjustment
 
         if not self.is_aproximation:
             return mean_squared_error, class_of_object, is_classified
@@ -348,12 +339,12 @@ def read_2d_float_array_from_file(file_name):
 def main():
     numpy.random.seed(0)
     neurons = 20
-    train_file = "approximation_train_1.txt"
-    test_file = "approximation_test.txt"
+    train_file = "classification_train.txt"
+    test_file = "classification_test.txt"
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, :-1],
-                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=True)
+    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, :-1],
+                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
     iterations = 100
     siec.train(iterations)
     plot_file()
