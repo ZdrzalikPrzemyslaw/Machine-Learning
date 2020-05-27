@@ -125,7 +125,7 @@ class NeuralNetwork:
     # że bias istnieje to on jest po prostu dodawany do odpowiedniego wyniku iloczynu skalarnego
     # bias istnieje tylko dla output layer aktualnie
     def gauss_func(self, inputs, radial_weight, coefficient):
-        return numpy.exp(-1 * ((distance.euclidean(inputs, radial_weight)) ** 2) / (2 * coefficient ** 2))
+        return numpy.exp(-1 * (((distance.euclidean(inputs, radial_weight))) ** 2) / (2 * coefficient ** 2))
 
     def calculate_outputs(self, inputs):
         hidden_layer_output = []
@@ -138,8 +138,9 @@ class NeuralNetwork:
         output_layer_output = numpy.dot(hidden_layer_output, self.output_layer.T) + self.bias_output_layer
         return hidden_layer_output, output_layer_output
 
+    # TODO: To jest !CHYBA! różniczka zupełna
     def hidden_layer_deriative(self, inputs):
-        return inputs * numpy.exp(- ((-inputs) ** 2) / (2 * self.scale_coefficient ** 2)) / self.scale_coefficient ** 2
+        return - inputs * numpy.exp(-(inputs ** 2) / (2*self.scale_coefficient)) / (self.scale_coefficient ** 2)
 
     def sigma_delta(self, inputs):
         return inputs ** 2 * numpy.exp(- ((-inputs) ** 2) / (2 * self.scale_coefficient ** 2)) / self.scale_coefficient ** 3
@@ -223,6 +224,11 @@ class NeuralNetwork:
         # print(hidden_layer_delta)
 
         # sigma_delta = hidden_layer_delta * self.sigma_deriative(hidden_layer_output)
+        # TODO to jest zle
+        hidden_layer_delta = numpy.asarray(hidden_layer_delta)
+        for i in range(len(hidden_layer_delta)):
+            hidden_layer_delta[i] = hidden_layer_delta[i] * self.hidden_layer[i]
+
 
         output_layer_adjustment = []
 
@@ -255,7 +261,7 @@ class NeuralNetwork:
         # sigma_adj = eta * sigma_adj
 
         # modyfikujemy wagi w warstwach
-        # self.hidden_layer -= hidden_layer_adjustment
+        self.hidden_layer -= hidden_layer_adjustment
         self.output_layer -= output_layer_adjustment
         # self.scale_coefficient -= sigma_adj
 
