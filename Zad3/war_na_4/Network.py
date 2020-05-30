@@ -36,6 +36,7 @@ class NeuralNetwork:
         # dane wejsciowe
         self.input_data = input_data
         self.expected_outputs = expected_outputs
+        self.number_of_neurons_hidden_layer = number_of_neurons_hidden_layer
 
         if not self.is_aproximation:
             self.amount_of_class = []
@@ -250,12 +251,12 @@ class NeuralNetwork:
                 (i + j + k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
         plt.xlabel('Epoka')
         plt.ylabel('Ilość popranych przyporządkowań')
-        plt.plot(values, 'o', markersize=2, label="Wszystkie obiekty")
-        plt.plot(values1, 'o', markersize=2, label="Obiekt 1")
-        plt.plot(values2, 'o', markersize=2, label="Obiekt 2")
-        plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
+        plt.plot(values, markersize=2, label="Wszystkie obiekty")
+        plt.plot(values1, markersize=2, label="Obiekt 1")
+        plt.plot(values2, markersize=2, label="Obiekt 2")
+        plt.plot(values3, markersize=2, label="Obiekt 3")
         plt.legend()
-        plt.show()
+        plt.savefig("Zad3/war_na_4/klasyfikacja" + str(neurons) +".png")
 
 
 # otwieramy plik errorów i go plotujemy
@@ -270,8 +271,10 @@ def plot_file():
     plt.plot(values, markersize=1)
     plt.xlabel('Iteracja')
     plt.ylabel('Wartość błędu')
-    plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
-    plt.show()
+    # plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
+    plt.title("Zmiana Błędu Średniokwadratowego,\n liczba neuronów w warstwie radialnej = " + str(neurons))
+    plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy" + str(neurons) + ".png")
+    plt.clf()
 
 
 def plot_function(siec, title, neurons, points=None):
@@ -285,9 +288,11 @@ def plot_function(siec, title, neurons, points=None):
         plt.plot(points, values, 'o', markersize=1)
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
+        # plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
+        plt.title("Liczba neuronów w warstwie radialnej = " + str(neurons))
         plt.tight_layout()
-        plt.show()
+        plt.savefig("Zad3/war_na_4/aproksymacja" + str(neurons) +".png")
+        plt.clf()
 
 
 # funkcja zwraca 2d array floatów w postaci arraya z paczki numpy.
@@ -302,16 +307,28 @@ def read_2d_float_array_from_file(file_name):
         two_dim_list_of_return_values.append(one_dim_list)
     return numpy.asarray(two_dim_list_of_return_values)
 
-
+neurons = 20
 def main():
     numpy.random.seed(0)
-    neurons = 20
-    train_file = "classification_train.txt"
-    test_file = "classification_test.txt"
+    
+    # Aproksymacja
+    # train_file = "Zad3/war_na_4/approximation_train_1.txt"
+    # test_file = "Zad3/war_na_4/approximation_test.txt"
+    # data_input = read_2d_float_array_from_file(train_file)[:, 0]
+    # data_expected_output = read_2d_float_array_from_file(train_file)[:, 1]
+    
+
+    #Klasyfikacja
+    train_file = "Zad3/war_na_4/classification_train.txt"
+    test_file = "Zad3/war_na_4/classification_test.txt"
+    data_input = read_2d_float_array_from_file(train_file)[:, :-1]
+    data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
+
+
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    siec = NeuralNetwork(neurons, 3, False, read_2d_float_array_from_file(train_file)[:, :-1],
-                         read_2d_float_array_from_file(train_file)[:, -1], is_aproximation=False)
+    siec = NeuralNetwork(neurons, 3, False, data_input,
+                         data_expected_output, is_aproximation=False)
     iterations = 100
     siec.train(iterations)
     plot_file()
@@ -324,7 +341,7 @@ def main():
         all_3 = [0, 0, 0]
         it = 0
         if len(siec.output_layer) == 3:
-            for i in read_2d_float_array_from_file(train_file)[:, :]:
+            for i in read_2d_float_array_from_file(test_file)[:, :]:
                 obliczone = siec.calculate_outputs(i[:-1])[1]
                 if i[-1] == 1:
                     all_1[numpy.argmax(obliczone)] += 1

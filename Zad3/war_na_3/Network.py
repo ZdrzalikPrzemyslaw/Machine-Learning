@@ -191,7 +191,7 @@ def plot_file():
     plt.plot(values, markersize=1)
     plt.xlabel('Iteracja')
     plt.ylabel('Wartość błędu')
-    plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
+    plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
     plt.show()
 
 
