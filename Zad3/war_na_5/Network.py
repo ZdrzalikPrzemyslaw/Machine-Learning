@@ -286,7 +286,7 @@ class NeuralNetwork:
                 (i + j + k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
         plt.xlabel('Epoka')
         plt.ylabel('Ilość popranych przyporządkowań')
-        #tytuly wykresow
+        # tytuly wykresow
         # plt.title("Liczba neuronów w warstwie radialnej = " + str(neurons))
         # plt.title("Współczynnik momentum = " + str(alfa))
         plt.title("Współczynnik uczenia = " + str(eta))
@@ -296,11 +296,7 @@ class NeuralNetwork:
         plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
         plt.legend()
 
-        #pliki
-        # plt.savefig("Zad3/war_na_5/klasyfikacja_momentum" + str(alfa) +".png")
-        # plt.savefig("Zad3/war_na_5/klasyfikacja_neurony" + str(neurons) +".png")
-        plt.savefig("Zad3/war_na_5/klasyfikacja_uczenia" + str(eta) +".png")
-        plt.clf()
+        plt.show()
 
 
 # otwieramy plik errorów i go plotujemy
@@ -315,16 +311,12 @@ def plot_file():
     plt.plot(values, markersize=1)
     plt.xlabel('Iteracja')
     plt.ylabel('Wartość błędu')
-    #tytuly wykresow
+    # tytuly wykresow
     plt.title("Zmiana Błędu Średniokwadratowego,\n liczba neuronów w warstwie radialnej = " + str(neurons))
     # plt.title("Zmiana Błędu Średniokwadratowego,\n momentum = " + str(alfa))
     # plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta))
-    
-    #pliki
-    plt.savefig("Zad3/war_na_5/blad_sredniokwadratowy_aproksymacja_porownanie_neuron" + str(neurons) + ".png")
-    # plt.savefig("Zad3/war_na_5/blad_sredniokwadratowy_aproksymacja_momentum" + str(alfa) + ".png")
-    # plt.savefig("Zad3/war_na_5/blad_sredniokwadratowy_aproksymacja_uczenia" + str(eta) + ".png")
-    plt.clf()
+
+    plt.show()
 
 
 def plot_function(siec, title, neurons, points=None):
@@ -338,17 +330,15 @@ def plot_function(siec, title, neurons, points=None):
         plt.plot(points, values, 'o', markersize=1)
         plt.xlabel('X')
         plt.ylabel('Y')
-        #tytuly wykresow
+        # tytuly wykresow
         plt.title("liczba neuronów w warstwie radialnej = " + str(neurons))
         # plt.title("wsp. uczenia = " + str(eta))
         # plt.title("wsp. momentum = " + str(alfa))
         # plt.tight_layout()
-        
-        #pliki
-        plt.savefig("Zad3/war_na_5/aproksymacja_porownanie_neurony" + str(neurons) +".png")
-        # plt.savefig("Zad3/war_na_5/aproksymacja_momentum" + str(alfa) +".png")
-        # plt.savefig("Zad3/war_na_5/aproksymacja_uczenia" + str(eta) +".png")
-        plt.clf()
+
+        # pliki
+
+        plt.show()
 
 
 # funkcja zwraca 2d array floatów w postaci arraya z paczki numpy.
@@ -363,8 +353,11 @@ def read_2d_float_array_from_file(file_name):
         two_dim_list_of_return_values.append(one_dim_list)
     return numpy.asarray(two_dim_list_of_return_values)
 
-#liczba neuronow w warstwie radialnej
-neurons = 3
+
+# liczba neuronow w warstwie radialnej
+neurons = 20
+
+
 def main():
     numpy.random.seed(0)
     # neurons = 7
@@ -372,21 +365,19 @@ def main():
     # test_file = "classification_test.txt"
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    
-    
+
     # Aproksymacja
-    train_file = "Zad3/war_na_4/approximation_train_1.txt"
-    test_file = "Zad3/war_na_4/approximation_test.txt"
+    train_file = "approximation_train_1.txt"
+    test_file = "approximation_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-    
 
-    #Klasyfikacja
+    # Klasyfikacja
     # train_file = "Zad3/war_na_4/classification_train.txt"
     # test_file = "Zad3/war_na_4/classification_test.txt"
     # data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-    
+
     siec = NeuralNetwork(neurons, 3, True, data_input,
                          data_expected_output, is_aproximation=True)
     iterations = 100

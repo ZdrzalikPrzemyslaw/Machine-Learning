@@ -260,10 +260,7 @@ class NeuralNetwork:
         plt.plot(values2, 'o', markersize=2, label="Obiekt 2")
         plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
         plt.legend()
-        #zapisz do pliku w zależności od eksperymentu
-        # plt.savefig("Zad3/war_na_4/klasyfikacja_momentum" + str(alfa) +".png")
-        # plt.savefig("Zad3/war_na_4/klasyfikacja_neurony" + str(neurons) +".png")
-        plt.savefig("Zad3/war_na_4/klasyfikacja_uczenia" + str(eta) +".png")
+        plt.show()
 
 
 # otwieramy plik errorów i go plotujemy
@@ -284,9 +281,7 @@ def plot_file():
     # plt.title("Zmiana Błędu Średniokwadratowego,\n momentum = " + str(alfa))
     # plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta))
     #zapisz do pliku w zależności od eksperymentu
-    plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy_aproksymacja_porownanie_neuron" + str(neurons) + ".png")
-    # plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy_klasyfikacja_momentum" + str(alfa) + ".png")
-    # plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy_klasyfikacja_uczenia" + str(eta) + ".png")
+    plt.show()
     plt.clf()
 
 
@@ -308,10 +303,7 @@ def plot_function(siec, title, neurons, points=None):
         # plt.title("wsp. momentum = " + str(alfa))
         plt.tight_layout()
         #zapisz do pliku w zależności od eksperymentu
-        plt.savefig("Zad3/war_na_4/aproksymacja_prownanie_neurony" + str(neurons) +".png")
-        # plt.savefig("Zad3/war_na_5/aproksymacja_momentum" + str(alfa) +".png")
-        # plt.savefig("Zad3/war_na_5/aproksymacja_uczenia" + str(eta) +".png")
-        plt.clf()
+        plt.show()
 
 
 # funkcja zwraca 2d array floatów w postaci arraya z paczki numpy.
@@ -331,8 +323,8 @@ def main():
     numpy.random.seed(0)
     
     # Aproksymacja
-    train_file = "Zad3/war_na_4/approximation_train_1.txt"
-    test_file = "Zad3/war_na_4/approximation_test.txt"
+    train_file = "approximation_train_1.txt"
+    test_file = "approximation_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
     
