@@ -6,11 +6,11 @@ from scipy.spatial import distance
 import matplotlib.pyplot as plt
 
 # wspolczynnik uczenia
-eta = 0.1
+eta = 0.01
 # momentum
-alfa = 0
+alfa = 0.2
 
-CLASSYFICATION_ERROR_MARGIN = 0.5
+CLASSYFICATION_ERROR_MARGIN = 0.2
 
 
 class NeuralNetwork:
@@ -251,12 +251,19 @@ class NeuralNetwork:
                 (i + j + k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
         plt.xlabel('Epoka')
         plt.ylabel('Ilość popranych przyporządkowań')
-        plt.plot(values, markersize=2, label="Wszystkie obiekty")
-        plt.plot(values1, markersize=2, label="Obiekt 1")
-        plt.plot(values2, markersize=2, label="Obiekt 2")
-        plt.plot(values3, markersize=2, label="Obiekt 3")
+        #tytul w zależności od eksperymentu
+        # plt.title("Liczba neuronów w warstwie radialnej = " + str(neurons))
+        # plt.title("Współczynnik momentum = " + str(alfa))
+        plt.title("Współczynnik uczenia = " + str(eta))
+        plt.plot(values, 'o', markersize=2, label="Wszystkie obiekty")
+        plt.plot(values1, 'o',markersize=2, label="Obiekt 1")
+        plt.plot(values2, 'o', markersize=2, label="Obiekt 2")
+        plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
         plt.legend()
-        plt.savefig("Zad3/war_na_4/klasyfikacja" + str(neurons) +".png")
+        #zapisz do pliku w zależności od eksperymentu
+        # plt.savefig("Zad3/war_na_4/klasyfikacja_momentum" + str(alfa) +".png")
+        # plt.savefig("Zad3/war_na_4/klasyfikacja_neurony" + str(neurons) +".png")
+        plt.savefig("Zad3/war_na_4/klasyfikacja_uczenia" + str(eta) +".png")
 
 
 # otwieramy plik errorów i go plotujemy
@@ -271,9 +278,15 @@ def plot_file():
     plt.plot(values, markersize=1)
     plt.xlabel('Iteracja')
     plt.ylabel('Wartość błędu')
+    #tytul w zależności od eksperymentu
     # plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
     plt.title("Zmiana Błędu Średniokwadratowego,\n liczba neuronów w warstwie radialnej = " + str(neurons))
-    plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy" + str(neurons) + ".png")
+    # plt.title("Zmiana Błędu Średniokwadratowego,\n momentum = " + str(alfa))
+    # plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta))
+    #zapisz do pliku w zależności od eksperymentu
+    plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy_aproksymacja_porownanie_neuron" + str(neurons) + ".png")
+    # plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy_klasyfikacja_momentum" + str(alfa) + ".png")
+    # plt.savefig("Zad3/war_na_4/blad_sredniokwadratowy_klasyfikacja_uczenia" + str(eta) + ".png")
     plt.clf()
 
 
@@ -288,10 +301,16 @@ def plot_function(siec, title, neurons, points=None):
         plt.plot(points, values, 'o', markersize=1)
         plt.xlabel('X')
         plt.ylabel('Y')
+        #tytul w zależności od eksperymentu
         # plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
-        plt.title("Liczba neuronów w warstwie radialnej = " + str(neurons))
+        plt.title("liczba neuronów w warstwie radialnej = " + str(neurons))
+        # plt.title("wsp. uczenia = " + str(eta))
+        # plt.title("wsp. momentum = " + str(alfa))
         plt.tight_layout()
-        plt.savefig("Zad3/war_na_4/aproksymacja" + str(neurons) +".png")
+        #zapisz do pliku w zależności od eksperymentu
+        plt.savefig("Zad3/war_na_4/aproksymacja_prownanie_neurony" + str(neurons) +".png")
+        # plt.savefig("Zad3/war_na_5/aproksymacja_momentum" + str(alfa) +".png")
+        # plt.savefig("Zad3/war_na_5/aproksymacja_uczenia" + str(eta) +".png")
         plt.clf()
 
 
@@ -306,29 +325,29 @@ def read_2d_float_array_from_file(file_name):
             one_dim_list.append(j)
         two_dim_list_of_return_values.append(one_dim_list)
     return numpy.asarray(two_dim_list_of_return_values)
-
-neurons = 20
+#liczba neuronow w warstwie radialnej
+neurons = 3
 def main():
     numpy.random.seed(0)
     
     # Aproksymacja
-    # train_file = "Zad3/war_na_4/approximation_train_1.txt"
-    # test_file = "Zad3/war_na_4/approximation_test.txt"
-    # data_input = read_2d_float_array_from_file(train_file)[:, 0]
-    # data_expected_output = read_2d_float_array_from_file(train_file)[:, 1]
+    train_file = "Zad3/war_na_4/approximation_train_1.txt"
+    test_file = "Zad3/war_na_4/approximation_test.txt"
+    data_input = read_2d_float_array_from_file(train_file)[:, :-1]
+    data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
     
 
     #Klasyfikacja
-    train_file = "Zad3/war_na_4/classification_train.txt"
-    test_file = "Zad3/war_na_4/classification_test.txt"
-    data_input = read_2d_float_array_from_file(train_file)[:, :-1]
-    data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
+    # train_file = "Zad3/war_na_4/classification_train.txt"
+    # test_file = "Zad3/war_na_4/classification_test.txt"
+    # data_input = read_2d_float_array_from_file(train_file)[:, 0:4]
+    # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
 
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
     siec = NeuralNetwork(neurons, 3, False, data_input,
-                         data_expected_output, is_aproximation=False)
+                         data_expected_output, is_aproximation=True)
     iterations = 100
     siec.train(iterations)
     plot_file()
@@ -342,7 +361,7 @@ def main():
         it = 0
         if len(siec.output_layer) == 3:
             for i in read_2d_float_array_from_file(test_file)[:, :]:
-                obliczone = siec.calculate_outputs(i[:-1])[1]
+                obliczone = siec.calculate_outputs(i[0:4])[1]
                 if i[-1] == 1:
                     all_1[numpy.argmax(obliczone)] += 1
                 elif i[-1] == 2:
@@ -352,13 +371,13 @@ def main():
                 it += 1
         else:
             for i in read_2d_float_array_from_file(test_file)[:, :]:
-                obliczone = siec.calculate_outputs(i[:-1])[1]
+                obliczone = siec.calculate_outputs(i[0:4])[1]
                 classa = 0
-                if obliczone - 1 <= 0.5:
+                if abs(obliczone - 1) <= 0.5:
                     classa = 1
-                elif obliczone - 2 <= 0.5:
+                elif abs(obliczone - 2) <= 0.5:
                     classa = 2
-                elif obliczone - 3 <= 0.5:
+                elif abs(obliczone - 3) <= 0.5:
                     classa = 3
 
                 if i[-1] == classa:
