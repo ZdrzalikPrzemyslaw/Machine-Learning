@@ -2,6 +2,7 @@ import numpy as np
 
 from scipy.spatial import distance
 
+
 def get_distance(x, y):
     return distance.euclidean(x, y)
 
@@ -9,11 +10,11 @@ def get_distance(x, y):
 def kmeans(data, number_of_centers, max_ite):
     centroids = data[np.random.choice(range(len(data)), number_of_centers, replace=False)]
 
-    is_Stabilized = False
+    is_stabilized = False
 
     current_ite = 0
 
-    while (not is_Stabilized) and (current_ite < max_ite):
+    while (not is_stabilized) and (current_ite < max_ite):
 
         cluster_list = [[] for i in range(len(centroids))]
 
@@ -35,7 +36,7 @@ def kmeans(data, number_of_centers, max_ite):
             centroids.append(np.mean(i, axis=0))
 
         stop = np.abs(np.sum(previous_centroids) - np.sum(centroids))
-        is_Stabilized = (stop < 0.001)
+        is_stabilized = (stop < 0.001)
 
         current_ite += 1
 
