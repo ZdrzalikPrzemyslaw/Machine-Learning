@@ -184,10 +184,10 @@ class KMean:
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title("epoka " + str(self.epoch_counter))
-        plt.savefig("../war_na_4/" + str(self.epoch_counter) + ".png")
+        plt.savefig("../Classification/" + str(self.epoch_counter) + ".png")
         plt.clf()
-        self.images.append(imageio.imread("../war_na_4/" + str(self.epoch_counter) + ".png"))
-        os.remove("../war_na_4/" + str(self.epoch_counter) + ".png")
+        self.images.append(imageio.imread("../Classification/" + str(self.epoch_counter) + ".png"))
+        os.remove("../Classification/" + str(self.epoch_counter) + ".png")
 
     # funkcja rysujaca kolejne wykresy
     def animation_plot(self):
@@ -199,14 +199,14 @@ class KMean:
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title("epoka " + str(self.epoch_counter))
-        plt.savefig("../war_na_4/" + str(self.epoch_counter) + ".png")
+        plt.savefig("../Classification/" + str(self.epoch_counter) + ".png")
         plt.clf()
-        self.images.append(imageio.imread("../war_na_4/" + str(self.epoch_counter) + ".png"))
-        # os.remove("../war_na_4/" + str(self.epoch_counter) + ".png")
+        self.images.append(imageio.imread("../Classification/" + str(self.epoch_counter) + ".png"))
+        # os.remove("../Classification/" + str(self.epoch_counter) + ".png")
 
     # funkcja tworzaca gifa
     def create_gif(self):
-        imageio.mimsave("../war_na_4/" + "animacja.gif", self.images, 'GIF', duration=0.5)
+        imageio.mimsave("../Classification/" + "animacja.gif", self.images, 'GIF', duration=0.5)
 
     # funkcja plotuje wykres bledu
     def plot_error_graph(self):
@@ -214,7 +214,7 @@ class KMean:
         plt.xlabel('Epoka')
         plt.ylabel('Wartosc')
         plt.title("Wartosc bledu kwantyzacji \n ilosc skupien: " + str(self.number_of_centroids))
-        plt.savefig("../war_na_4/" + "wykres.png")
+        plt.savefig("../Classification/" + "wykres.png")
         plt.clf()
 
 

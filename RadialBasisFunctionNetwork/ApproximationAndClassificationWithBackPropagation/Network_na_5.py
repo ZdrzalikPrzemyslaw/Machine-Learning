@@ -344,15 +344,15 @@ def main():
     # ilość neuronów, ilość wyjść, czy_bias
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
 
-    # Aproksymacja
+    # Approximation
     train_file = "classification_train.txt"
     test_file = "classification_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
-    # Klasyfikacja
-    # train_file = "RadialBasisFunctionNetwork/war_na_4/classification_train.txt"
-    # test_file = "RadialBasisFunctionNetwork/war_na_4/classification_test.txt"
+    # Classification
+    # train_file = "RadialBasisFunctionNetwork/Classification/classification_train.txt"
+    # test_file = "RadialBasisFunctionNetwork/Classification/classification_test.txt"
     # data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 

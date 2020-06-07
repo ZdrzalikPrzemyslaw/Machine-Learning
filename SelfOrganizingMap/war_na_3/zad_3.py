@@ -277,28 +277,28 @@ def main():
     eksperyment1 = "eks3"
     eksperyment2 = "eks4"
     #eksperyment stala alfa inny radius
-    # kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\war_na_3\Danetestowe.txt", is_comma=True),
+    # kohonen = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\Approximation\Danetestowe.txt", is_comma=True),
     #                              neuron_num=100,
     #                              is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.5,
     #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
-    # kohonen1 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\war_na_3\Danetestowe.txt", is_comma=True),
+    # kohonen1 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\Approximation\Danetestowe.txt", is_comma=True),
     #                              neuron_num=100,
     #                              is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=0.5,
     #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
-    # kohonen2 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\war_na_3\Danetestowe.txt", is_comma=True),
+    # kohonen2 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\Approximation\Danetestowe.txt", is_comma=True),
     #                              neuron_num=100,
     #                              is_gauss=False, is_neural_gas=True, epoch_count=1, neighbourhood_radius=0.5,
     #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
     
-    # kohonen3 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\war_na_3\Danetestowe.txt", is_comma=True),
+    # kohonen3 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\Approximation\Danetestowe.txt", is_comma=True),
     #                              neuron_num=100,
     #                              is_gauss=False, is_neural_gas=False, epoch_count=1, neighbourhood_radius=2,
     #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
-    # kohonen4 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\war_na_3\Danetestowe.txt", is_comma=True),
+    # kohonen4 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\Approximation\Danetestowe.txt", is_comma=True),
     #                              neuron_num=100,
     #                              is_gauss=True, is_neural_gas=False, epoch_count=1, neighbourhood_radius=2,
     #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))
-    # kohonen5 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\war_na_3\Danetestowe.txt", is_comma=True),
+    # kohonen5 = KohonenOrNeuralGas(input_matrix=read_2d_float_array_from_file("SelfOrganizingMap\Approximation\Danetestowe.txt", is_comma=True),
     #                              neuron_num=100,
     #                              is_gauss=False, is_neural_gas=True, epoch_count=1, neighbourhood_radius=2,
     #                              min_potential=0.75, alfa=0.5, starting_pos=read_2d_float_array_from_file("test.txt", is_comma=True))

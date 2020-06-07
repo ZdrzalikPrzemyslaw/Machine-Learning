@@ -299,15 +299,15 @@ neurons = 3
 def main():
     numpy.random.seed(0)
 
-    # Aproksymacja
+    # Approximation
     train_file = "approximation_train_1.txt"
     test_file = "approximation_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
-    # Klasyfikacja
-    # train_file = "RadialBasisFunctionNetwork/war_na_4/classification_train.txt"
-    # test_file = "RadialBasisFunctionNetwork/war_na_4/classification_test.txt"
+    # Classification
+    # train_file = "RadialBasisFunctionNetwork/Classification/classification_train.txt"
+    # test_file = "RadialBasisFunctionNetwork/Classification/classification_test.txt"
     # data_input = read_2d_float_array_from_file(train_file)[:, 0:4]
     # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
