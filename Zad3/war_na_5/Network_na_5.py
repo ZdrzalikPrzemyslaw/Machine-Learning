@@ -125,13 +125,15 @@ class NeuralNetwork:
     def hidden_layer_deriative(self, inputs):
         derivatives = []
         for i in range(len(inputs[0])):
-            derivatives.append(inputs[:, i] / numpy.power(self.scale_coefficient, 2))
+            derivatives.append(inputs[:, i] / numpy.power(self.scale_coefficient, 2) *
+                               numpy.exp(-numpy.power(inputs[:, i], 2) / numpy.power(self.scale_coefficient, 2)))
         return numpy.asarray(derivatives)
 
     def hidden_layer_deriative_sigma(self, inputs):
         derivatives = []
         for i in range(len(inputs[0])):
-            derivatives.append(numpy.power(inputs[:, i], 2) / numpy.power(self.scale_coefficient, 3))
+            derivatives.append(numpy.power(inputs[:, i], 2) / numpy.power(self.scale_coefficient, 3) *
+                               numpy.exp(-numpy.power(inputs[:, i], 2) / numpy.power(self.scale_coefficient, 2)))
         return numpy.asarray(derivatives).sum(axis=0)
 
     # trening, tyle razy ile podamy epochów
@@ -331,7 +333,7 @@ def read_2d_float_array_from_file(file_name):
 
 
 # liczba neuronow w warstwie radialnej
-neurons = 20
+neurons = 7
 
 
 def main():
@@ -343,8 +345,8 @@ def main():
     # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
 
     # Aproksymacja
-    train_file = "approximation_train_1.txt"
-    test_file = "approximation_test.txt"
+    train_file = "classification_train.txt"
+    test_file = "classification_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
@@ -354,8 +356,8 @@ def main():
     # data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
-    siec = NeuralNetwork(neurons, 1, True, data_input,
-                         data_expected_output, is_aproximation=True)
+    siec = NeuralNetwork(neurons, 3, True, data_input,
+                         data_expected_output, is_aproximation=False)
     iterations = 100
     siec.train(iterations)
     plot_file()
