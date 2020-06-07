@@ -246,7 +246,7 @@ def main():
     NUMBER_OF_CENTROIDS = 2
     NUMBER_OF_EPOCH = 14
     
-    kMean = KMean(points_matrix=create_points("../war_na_3/Danetestowe.txt", is_comma=True),
+    kMean = KMean(points_matrix=create_points("../KohonenAndNeuralGas/Danetestowe.txt", is_comma=True),
                   number_of_centroids=NUMBER_OF_CENTROIDS, number_of_epoch=NUMBER_OF_EPOCH)
 
     kMean.train()
