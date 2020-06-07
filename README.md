@@ -1,5 +1,6 @@
 # IAD
-Inteligentna Analiza Danych wszystkie zadania
+
+Pyton implementations of various Machine Learning algorithms.
 
 ### Team Members
 * [Przemysław Zdrzalik](https://github.com/ZdrzalikPrzemyslaw)
