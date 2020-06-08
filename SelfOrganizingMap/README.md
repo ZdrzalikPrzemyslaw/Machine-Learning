@@ -4,17 +4,14 @@
 
 ###  [Kohonen and Neural Gas Algorithms](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/KohonenAndNeuralGas)
 
-
-<div class ="row">
-    <div class ="column">
+<table cellpadding="0" cellspacing="0" border="0">
+  <tr>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_Before.png"
      alt="Approximation plot"/>
-     </div>
-     <div class ="column">
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_After.png"
      alt="Error plot"/>
-     </div>
-</div>
+  </tr>
+ </table>
 
 
 ### [K-Means clustering](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/KMeans)
