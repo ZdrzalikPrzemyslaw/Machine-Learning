@@ -62,4 +62,15 @@
 
 ### [Image Quantization](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/ImageQuantization)
 
-
+<table cellpadding="0" cellspacing="0" border="0">
+    <tr>
+    <td><p align="center">before</p></td>
+    <td><p align="center">after</p></td>
+    </tr>
+  <tr>
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantization_Before.png"
+     alt="Before Quantization"/></td>
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantizationr.png"
+     alt="After Quantization"/></td>
+  </tr>
+ </table>

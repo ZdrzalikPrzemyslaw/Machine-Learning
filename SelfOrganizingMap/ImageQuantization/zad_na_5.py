@@ -242,7 +242,7 @@ def save_new_picture(image, kohonen):
 
 
 def main():
-    im = Image.open('96254003_1093354737688229_8413853499938308096_n.jpg')
+    im = Image.open('12-Angry-Men-The-Jurors-700x525.jpg')
     kohonen = KohonenOrNeuralGas(input_matrix=image_pixels_to_array(im),
                                  neuron_num=16,
                                  is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1.5,
