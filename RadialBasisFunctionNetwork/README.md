@@ -1,4 +1,4 @@
-# [RBF](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/RadialBasisFunctionNetwork))
+# [RBF](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/RadialBasisFunctionNetwork)
 
 ## Examples
 
@@ -26,7 +26,6 @@
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_RBF_Example_Error.png"
      alt="Error plot"/>
      
-          <b>
  Example Confusion Matrix
  </b>
 </p>
