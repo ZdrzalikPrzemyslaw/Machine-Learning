@@ -31,14 +31,7 @@
 ## [Transformation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Transformation)
 
 <p align="center">
- <b>
- Plot of the Classification rate by epoch
- </b>
- <br> <br>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_MLP_Example_Plot.png"
-     alt="Classification plot"/>
-<br>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_MLP_Example_Error.png"
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Transformation_MLP_Example_Error.png"
      alt="Error plot"/>
 </p>
 
