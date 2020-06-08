@@ -34,6 +34,8 @@
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Transformation_MLP_Example_Error.png"
      alt="Error plot"/>
      <br>
+     <br>
+     <br>
      <b>
  Example transformation
  </b>
