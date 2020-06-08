@@ -60,7 +60,14 @@ Classification Object 3 :  [0, 2, 29]
      alt="Error plot"/>
      
  Example Confusion Matrix:
+ 
  </b>
 </p>
 
 
+```python
+Classification Objects  :   1,  2,  3
+Classification Object 1 :  [31, 0, 0]
+Classification Object 2 :  [0, 29, 2]
+Classification Object 3 :  [0, 2, 29]
+```

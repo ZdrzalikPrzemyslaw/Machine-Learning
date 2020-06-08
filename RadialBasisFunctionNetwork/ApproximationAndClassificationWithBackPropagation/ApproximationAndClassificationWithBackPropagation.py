@@ -330,14 +330,14 @@ def main():
     # neurons = 7
 
     # Approximation
-    train_file = "approximation_train_1.txt"
-    test_file = "approximation_test.txt"
+    train_file = "classification_train.txt"
+    test_file = "classification_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
-    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons, number_of_neurons_output=1,
+    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons, number_of_neurons_output=3,
                          is_bias=True, input_data=data_input,
-                         expected_outputs=data_expected_output, is_aproximation=True)
+                         expected_outputs=data_expected_output, is_aproximation=False)
     iterations = 100
     siec.train(iterations)
     plot_file()
@@ -379,12 +379,10 @@ def main():
                 elif i[-1] == 3:
                     all_3[classa - 1] += 1
                 it += 1
-        print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
-        print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
-        print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
-        print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
-        print("ILOŚC Wszystkich: ", it)
-        print("ILOŚć Odgadnietych: ", correct_amount)
+        print("Classification Objects  :   1,  2,  3")
+        print("Classification Object 1 : ", all_1)
+        print("Classification Object 2 : ", all_2)
+        print("Classification Object 3 : ", all_3)
 
     elif siec.is_aproximation:
         values = read_2d_float_array_from_file(test_file)
