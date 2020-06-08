@@ -1,8 +1,9 @@
-# [MLP](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron)
+# [SOM](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap)
 
 ## Examples
 
-### [Approximation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Approximation)
+###  [Kohonen and Neural Gas Algorithms](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/KohonenAndNeuralGas)
+
 
 <p align="center">
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png"
@@ -13,7 +14,7 @@
 </p>
 
 
-### [Classification](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Classification)
+### [K-Means clustering](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/KMeans)
 
 <p align="center">
  <b>
@@ -28,7 +29,8 @@
 </p>
 
 
-###******** [Transformation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Transformation)
+### [Image Quantization](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/ImageQuantization)
+
 
 <p align="center">
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Transformation_MLP_Example_Error.png"
