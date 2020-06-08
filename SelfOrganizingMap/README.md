@@ -68,9 +68,9 @@
     <td><p align="center">after</p></td>
     </tr>
   <tr>
-    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantization_Before.png"
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantization_Before.jpg"
      alt="Before Quantization"/></td>
-    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantizationr.png"
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantization_After.jpg"
      alt="After Quantization"/></td>
   </tr>
  </table>
