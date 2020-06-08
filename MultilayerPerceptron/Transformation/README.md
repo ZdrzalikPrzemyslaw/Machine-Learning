@@ -18,7 +18,11 @@ siec.train(numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 2], 1)
 ```python
 plot_file()
 ```
-* Plotting the change in correct assigments
+* Testing the Transformation
 ```python
-plot_file("correct_assigment.txt")
+print("Input Data:")
+inpuciki = numpy.asarray([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+print(inpuciki)
+print("Output Data:")
+print(Network.calculate_outputs(inpuciki)[1])
 ``` 
