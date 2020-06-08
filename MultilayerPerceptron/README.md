@@ -10,7 +10,10 @@
      alt="Approximation plot"/>
 </p>
 * Change of approximation error over time
-![Error](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Error.png)
+<p align="center">
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Error.png"
+     alt="Error plot"/>
+</p>
 
 
 ## [Classification](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Classification)
