@@ -8,6 +8,8 @@ eta = 0.5
 # momentum
 alfa = 0.5
 
+ERROR_FILE = "mean_squared_error.txt"
+
 
 class NeuralNetwork:
     def __repr__(self):
@@ -94,12 +96,7 @@ class NeuralNetwork:
                 output_delta = output_error * self.sigmoid_fun_deriative(output_layer_output)
 
                 # korzystamy z wcześniej otrzymanego współczynniku błędu aby wyznaczyć błąd dla warstwy ukrytej
-                print(output_delta)
-                print(self.output_layer)
-                print(output_delta.T)
                 hidden_layer_error = output_delta.T.dot(self.output_layer)
-                print(hidden_layer_error)
-                exit(1)
                 # jak dla warstwy wyjściowej hidden_layer_delta jest jeden dla każdego neuronu i
                 # aby wyznaczyć zmianę wag przemnażamy go przez input odpowiadający wadze neuronu
                 hidden_layer_delta = hidden_layer_error * self.sigmoid_fun_deriative(hidden_layer_output)
@@ -218,7 +215,7 @@ class NeuralNetwork:
 
 
 # otwieramy plik errorów i go plotujemy
-def plot_file(fileName, string):
+def plot_file(fileName):
     with open(fileName, "r") as file:
         lines = file.read().splitlines()
     values = []
@@ -230,9 +227,11 @@ def plot_file(fileName, string):
         ilosc.append(liczba)
 
     # plt.plot(values, 'o', markersize=1)
-    plt.plot(ilosc, values, label=string)
-    plt.axis([-1000, len(lines), 0, 0.75])
-    # plt.show()
+    plt.xlabel('Iteration')
+    plt.ylabel('Error for epoch')
+    plt.title("Mean square error change")
+    plt.plot(ilosc, values)
+    plt.show()
 
 
 # funkcja zwraca 2d array intów w postaci arraya z paczki numpy.
@@ -250,56 +249,23 @@ def read_2d_int_array_from_file(file_name):
 
 def main():
     # liczba neuronów w warstwie ukrytej, liczba wyjść, liczba inputów, czy_bias
-    siec1 = NeuralNetwork(1, 4, 4, False)
-    siec2 = NeuralNetwork(2, 4, 4, False)
-    siec3 = NeuralNetwork(3, 4, 4, False)
-
-    # siec1 = NeuralNetwork(1, 4, 4, True)
-    # siec2 = NeuralNetwork(2, 4, 4, True)
-    # siec3 = NeuralNetwork(3, 4, 4, True)
+    neurons = 3
+    Network = NeuralNetwork(number_of_neurons_hidden_layer=neurons, is_bias=True,
+                            number_of_neurons_output=4, number_of_inputs=4)
+    input_data = "dane.txt"
+    iterations = 1000
 
     # dane wejściowe, dane wyjściowe, ilość epochów
-    siec1.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 10000,
-                "mean_squared_error_1b.txt")
-    siec2.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 10000,
-                "mean_squared_error_2b.txt")
-    siec3.train(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, 10000,
-                "mean_squared_error_3b.txt")
+    Network.train(read_2d_int_array_from_file(input_data), read_2d_int_array_from_file(input_data).T, iterations,
+                  ERROR_FILE)
 
-    # siec1.train_till_error(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, "mean_squared_error_1b.txt", 0.2)
-    # siec2.train_till_error(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, "mean_squared_error_2b.txt", 0.001)
-    # siec3.train_till_error(read_2d_int_array_from_file("dane.txt"), read_2d_int_array_from_file("dane.txt").T, "mean_squared_error_3b.txt", 0.001)
+    plot_file(ERROR_FILE)
 
-    # plot_file("mean_squared_error_1b.txt","1 neuron")
-    # plot_file("mean_squared_error_2b.txt","2 neurony")
-
-    # plot_file("mean_squared_error_3b.txt","3 neurony")
-    # plt.legend()
-    # plt.xlabel("iteracje")
-    # plt.ylabel("blad sredniokwadratowy")
-    # plt.show()
-    print("Wynik:")
-    inpuciki = numpy.asarray([1, 0, 0, 0])
+    print("Input Data:")
+    inpuciki = numpy.asarray([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     print(inpuciki)
-    print(siec1.calculate_outputs(inpuciki)[0])
-    # print(siec2.calculate_outputs(inpuciki)[0])
-    # print(siec3.calculate_outputs(inpuciki)[0])
-    inpuciki = numpy.asarray([0, 1, 0, 0])
-    print(inpuciki)
-    print(siec1.calculate_outputs(inpuciki)[0])
-    # print(siec2.calculate_outputs(inpuciki)[0])
-    # print(siec3.calculate_outputs(inpuciki)[0])
-    inpuciki = numpy.asarray([0, 0, 1, 0])
-    print(inpuciki)
-    print(siec1.calculate_outputs(inpuciki)[0])
-    # print(siec2.calculate_outputs(inpuciki)[0])
-    # print(siec3.calculate_outputs(inpuciki)[0])
-    inpuciki = numpy.asarray([0, 0, 0, 1])
-    print(inpuciki)
-    print(siec1.calculate_outputs(inpuciki)[0])
-    # print(siec2.calculate_outputs(inpuciki)[0])
-    # print(siec3.calculate_outputs(inpuciki)[0])
-    # print(siec1.iteration,siec2.iteration,siec3.iteration)
+    print("Output Data:")
+    print(Network.calculate_outputs(inpuciki)[1])
 
 
 if __name__ == "__main__":

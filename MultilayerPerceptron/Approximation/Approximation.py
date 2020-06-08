@@ -188,7 +188,7 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    neurons = 12
+    neurons = 7
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons,
                          number_of_neurons_output=1, number_of_inputs=1, is_bias=True)
