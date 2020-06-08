@@ -68,6 +68,6 @@ Classification Object 3 :  [0, 2, 29]
 ```python
 Classification Objects  :   1,  2,  3
 Classification Object 1 :  [31, 0, 0]
-Classification Object 2 :  [0, 29, 2]
-Classification Object 3 :  [0, 2, 29]
+Classification Object 2 :  [0, 30, 1]
+Classification Object 3 :  [0, 5, 26]
 ```

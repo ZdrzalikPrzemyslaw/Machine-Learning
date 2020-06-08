@@ -324,7 +324,6 @@ def read_2d_float_array_from_file(file_name):
 # liczba neuronow w warstwie radialnej
 neurons = 7
 
-
 def main():
     numpy.random.seed(0)
     # neurons = 7

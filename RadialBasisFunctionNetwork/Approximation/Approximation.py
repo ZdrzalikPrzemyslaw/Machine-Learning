@@ -180,15 +180,22 @@ def plot_file():
 
 def plot_function(siec, title, neurons, points=None):
     if points is not None:
+        values = read_2d_float_array_from_file(points)
+        values2 = numpy.zeros_like(values)
+        indexes = numpy.argsort(values[:, 0])
+        for i in range(len(indexes)):
+            values2[i] = values[indexes[i]]
+        points = values2
         values = []
-        for i in points:
-            values.append(siec.calculate_outputs(i[0])[1])
-        plt.plot(points[:, 0], points[:, 1])
+        plt.plot(points[:, 0], points[:, 1], label="original function")
         points = points[:, 0]
-        plt.plot(points, values, 'o', markersize=1)
+        for i in points:
+            values.append(siec.calculate_outputs(i)[1][0])
+        plt.plot(points, values, 'o', markersize=1, label="aproximation")
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.title("File: " + title[:-4] + ", num of neurons = " + str(neurons))
+        plt.title("File: " + title[:-4] + ", neuron count = " + str(neurons))
+        plt.legend()
         plt.tight_layout()
         plt.show()
 
@@ -212,18 +219,13 @@ def main():
     train_file = "approximation_train_1.txt"
     test_file = "approximation_test.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0],
+    Network = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0],
                          read_2d_float_array_from_file(train_file)[:, 1])
     iterations = 100
     # dane wejściowe, dane wyjściowe, ilość epochów
-    siec.train(iterations)
+    Network.train(iterations)
     plot_file()
-    values = read_2d_float_array_from_file(test_file)
-    values2 = numpy.zeros_like(values)
-    indexes = numpy.argsort(values[:, 0])
-    for i in range(len(indexes)):
-        values2[i] = values[indexes[i]]
-    plot_function(siec, train_file, neurons, values2)
+    plot_function(Network, train_file, neurons, test_file)
 
 
 if __name__ == "__main__":

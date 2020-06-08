@@ -190,23 +190,16 @@ def read_2d_float_array_from_file(file_name):
 def main():
     neurons = 7
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons,
+    Network = NeuralNetwork(number_of_neurons_hidden_layer=neurons,
                          number_of_neurons_output=1, number_of_inputs=1, is_bias=True)
     train_file = "approximation_train_1.txt"
     iterations = 1000
     # dane wejściowe, dane wyjściowe, ilość epochów
-    siec.train(read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1],
-               iterations)
+    Network.train(read_2d_float_array_from_file(train_file)[:, 0],
+                  read_2d_float_array_from_file(train_file)[:, 1], iterations)
     plot_file()
     test_file = "approximation_test.txt"
-    plot_function(siec, train_file, neurons, test_file)
-    # counter = 0
-    # blad = 0
-    # for i in read_2d_float_array_from_file("approximation_test.txt"):
-    #     blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
-    #     counter += 1
-    # blad = blad / counter
-    # print("BLAD ", blad)
+    plot_function(Network, train_file, neurons, test_file)
 
 
 if __name__ == "__main__":

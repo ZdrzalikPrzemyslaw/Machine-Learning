@@ -288,7 +288,6 @@ def read_2d_float_array_from_file(file_name):
 
 
 # liczba neuronow w warstwie radialnej
-neurons = 12
 
 
 def main():
@@ -298,8 +297,9 @@ def main():
     test_file = "classification_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-    siec = NeuralNetwork(neurons, 3, True, data_input,
-                         data_expected_output, is_aproximation=False)
+    siec = NeuralNetwork(number_of_neurons_hidden_layer=10, number_of_neurons_output=3,
+                         is_bias=True, input_data=data_input,
+                         expected_outputs=data_expected_output, is_aproximation=False)
     iterations = 100
     siec.train(iterations)
     plot_file()
