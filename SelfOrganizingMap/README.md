@@ -6,10 +6,10 @@
 
 <table cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_Before.png"
-     alt="Approximation plot"/>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_After.png"
-     alt="Error plot"/>
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_Before.png"
+     alt="Approximation plot"/></td>
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_After.png"
+     alt="Error plot"/></td>
   </tr>
  </table>
 
