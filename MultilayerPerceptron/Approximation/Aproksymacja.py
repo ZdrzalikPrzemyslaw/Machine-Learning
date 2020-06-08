@@ -148,7 +148,7 @@ def plot_file():
     plt.plot(values, markersize=1)
     plt.xlabel('Iteracja')
     plt.ylabel('Wartość błędu')
-    plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
+    plt.title("Mean square error change")
     plt.show()
 
 
@@ -162,13 +162,13 @@ def plot_function(siec, title, neurons, points=None):
         points = values2
         values = []
         plt.plot(points[:, 0], points[:, 1])
-        points = numpy.arange(-10, 10, 0.01)
+        points = points[:, 0]
         for i in points:
             values.append(siec.calculate_outputs(i)[1][0][0])
         plt.plot(points, values, 'o', markersize=1)
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
+        plt.title("File: " + title[:-4] + ", neuron count = " + str(neurons))
         plt.tight_layout()
         plt.show()
 
@@ -187,8 +187,7 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    numpy.random.seed(0)
-    neurons = 30
+    neurons = 12
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
     siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons,
                          number_of_neurons_output=1, number_of_inputs=1, is_bias=True)
