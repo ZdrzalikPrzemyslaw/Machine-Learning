@@ -6,10 +6,9 @@
 
 
 <p align="center">
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png"
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_Before.png"
      alt="Approximation plot"/>
-  <br>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Error.png"
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_After.png"
      alt="Error plot"/>
 </p>
 
