@@ -5,10 +5,6 @@
 #### Example output
 
 <p align="center">
- <b>
- <font size="+5">Plot of the function approximation</font>
- </b>
- <br> <br>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png"
      alt="Approximation plot"/>
   <br>
@@ -19,13 +15,14 @@
 
 ## [Classification](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Classification)
 
-* Plot of the Classification rate by epoch
 <p align="center">
+ <b>
+ Plot of the Classification rate by epoch
+ </b>
+ <br> <br>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_MLP_Example_Plot.png"
      alt="Classification plot"/>
-</p>
-* Change of approximation error over time
-<p align="center">
+<br>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_MLP_Example_Error.png"
      alt="Error plot"/>
 </p>
