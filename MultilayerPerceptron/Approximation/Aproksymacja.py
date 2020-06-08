@@ -146,8 +146,8 @@ def plot_file():
     for i in lines:
         values.append(float(i))
     plt.plot(values, markersize=1)
-    plt.xlabel('Iteracja')
-    plt.ylabel('Wartość błędu')
+    plt.xlabel('Iteration')
+    plt.ylabel('Error for epoch')
     plt.title("Mean square error change")
     plt.show()
 
