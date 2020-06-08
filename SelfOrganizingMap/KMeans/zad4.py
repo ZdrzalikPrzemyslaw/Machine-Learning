@@ -198,7 +198,7 @@ class KMean:
         plt.plot(centers_to_plot[:, 0], centers_to_plot[:, 1], ".", markersize=9, color="black")
         plt.xlabel('x')
         plt.ylabel('y')
-        plt.title("epoka " + str(self.epoch_counter))
+        plt.title("epoch " + str(self.epoch_counter))
         plt.savefig(str(self.epoch_counter) + ".png")
         plt.clf()
         self.images.append(imageio.imread(str(self.epoch_counter) + ".png"))
@@ -210,9 +210,9 @@ class KMean:
     # funkcja plotuje wykres bledu
     def plot_error_graph(self):
         plt.plot(self.plot_error[0], self.plot_error[1])
-        plt.xlabel('Epoka')
-        plt.ylabel('Wartosc')
-        plt.title("Wartosc bledu kwantyzacji \n ilosc skupien: " + str(self.number_of_centroids))
+        plt.xlabel('Epoch')
+        plt.ylabel('Error for Epoch')
+        plt.title("Quantization Error")
         plt.savefig("wykres.png")
         plt.clf()
 
@@ -244,7 +244,7 @@ def generate_random_points_in_range(x_min, x_max, y_min, y_max):
 def main():
     NUMBER_OF_CENTROIDS = 12
     NUMBER_OF_EPOCH = 14
-    
+
     kMean = KMean(points_matrix=create_points("Danetestowe.txt", is_comma=True),
                   number_of_centroids=NUMBER_OF_CENTROIDS, number_of_epoch=NUMBER_OF_EPOCH)
 
