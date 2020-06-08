@@ -262,16 +262,13 @@ class NeuralNetwork:
         for i, j, k in zip(self.correct_class_vector[0], self.correct_class_vector[1], self.correct_class_vector[2]):
             values.append(
                 (i + j + k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
-        plt.xlabel('Epoka')
-        plt.ylabel('Ilość popranych przyporządkowań')
-        # tytuly wykresow
-        # plt.title("Liczba neuronów w warstwie radialnej = " + str(neurons))
-        # plt.title("Współczynnik momentum = " + str(alfa))
-        plt.title("Współczynnik uczenia = " + str(eta))
-        plt.plot(values, 'o', markersize=2, label="Wszystkie obiekty")
-        plt.plot(values1, 'o', markersize=2, label="Obiekt 1")
-        plt.plot(values2, 'o', markersize=2, label="Obiekt 2")
-        plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
+        plt.xlabel('Epoch')
+        plt.ylabel('Percentage of correct classifications')
+        plt.title("Learning coeff = " + str(eta))
+        plt.plot(values, 'o', markersize=2, label="All classes")
+        plt.plot(values1, 'o', markersize=2, label="Class 1")
+        plt.plot(values2, 'o', markersize=2, label="Class 2")
+        plt.plot(values3, 'o', markersize=2, label="Class 3")
         plt.legend()
 
         plt.show()
@@ -287,13 +284,10 @@ def plot_file():
     for i in lines:
         values.append(float(i))
     plt.plot(values, markersize=1)
-    plt.xlabel('Iteracja')
-    plt.ylabel('Wartość błędu')
+    plt.xlabel('Epoch')
+    plt.ylabel('Error for epoch')
     # tytuly wykresow
-    plt.title("Zmiana Błędu Średniokwadratowego,\n liczba neuronów w warstwie radialnej = " + str(neurons))
-    # plt.title("Zmiana Błędu Średniokwadratowego,\n momentum = " + str(alfa))
-    # plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta))
-
+    plt.title("Mean square error change ,\n num of neruons = " + str(neurons))
     plt.show()
 
 
@@ -309,12 +303,7 @@ def plot_function(siec, title, neurons, points=None):
         plt.xlabel('X')
         plt.ylabel('Y')
         # tytuly wykresow
-        plt.title("liczba neuronów w warstwie radialnej = " + str(neurons))
-        # plt.title("wsp. uczenia = " + str(eta))
-        # plt.title("wsp. momentum = " + str(alfa))
-        # plt.tight_layout()
-
-        # pliki
+        plt.title("Num of neurons = " + str(neurons))
 
         plt.show()
 
@@ -339,25 +328,16 @@ neurons = 7
 def main():
     numpy.random.seed(0)
     # neurons = 7
-    # train_file = "classification_train.txt"
-    # test_file = "classification_test.txt"
-    # ilość neuronów, ilość wyjść, czy_bias
-    # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
 
     # Approximation
-    train_file = "classification_train.txt"
-    test_file = "classification_test.txt"
+    train_file = "approximation_train_1.txt"
+    test_file = "approximation_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
 
-    # Classification
-    # train_file = "RadialBasisFunctionNetwork/Classification/classification_train.txt"
-    # test_file = "RadialBasisFunctionNetwork/Classification/classification_test.txt"
-    # data_input = read_2d_float_array_from_file(train_file)[:, :-1]
-    # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-
-    siec = NeuralNetwork(neurons, 3, True, data_input,
-                         data_expected_output, is_aproximation=False)
+    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons, number_of_neurons_output=1,
+                         is_bias=True, input_data=data_input,
+                         expected_outputs=data_expected_output, is_aproximation=True)
     iterations = 100
     siec.train(iterations)
     plot_file()

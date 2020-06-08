@@ -43,20 +43,20 @@ Classification Object 3 :  [0, 2, 29]
 ### [Both Previous Variants with back propagation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/RadialBasisFunctionNetwork/ApproximationAndClassificationWithBackPropagation)
 
 <p align="center">
-<img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_RBF_Example_Plot.png"
+<img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_RBF_Example_Plot_backprop.png"
      alt="Approximation plot"/>
   <br>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_RBF_Example_Error.png"
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_RBF_Example_Error_backprop.png"
      alt="Error plot"/>
   <br>
  <b>
  Plot of the Classification rate by epoch
  </b>
  <br> <br>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_RBF_Example_Plot.png"
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_RBF_Example_Plot_backprop.png"
      alt="Classification plot"/>
 <br>
-    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_RBF_Example_Error.png"
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_RBF_Example_Error_backprop.png"
      alt="Error plot"/>
      
  Example Confusion Matrix:
