@@ -138,7 +138,6 @@ punkty.txt
 .vscode/
 
 #png i gif
-*.png
 *.gif
 
 test.txt
