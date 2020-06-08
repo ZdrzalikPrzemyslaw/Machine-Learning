@@ -5,10 +5,10 @@
 #### Example output
 
 <p align="center">
-* Plot of the function approximation
+ <b>Plot of the function approximation</b><br>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png"
      alt="Approximation plot"/>
-* Change of approximation error over time
+<b>Change of approximation error over time</b><br>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Error.png"
      alt="Error plot"/>
 </p>
