@@ -18,6 +18,16 @@
 
 ## [Classification](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Classification)
 
+* Plot of the Classification rate by epoch
+<p align="center">
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_MLP_Example_Plot.png"
+     alt="Classification plot"/>
+</p>
+* Change of approximation error over time
+<p align="center">
+    <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Classification_MLP_Example_Error.png"
+     alt="Error plot"/>
+</p>
 
 
 ## [Transformation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Transformation)
