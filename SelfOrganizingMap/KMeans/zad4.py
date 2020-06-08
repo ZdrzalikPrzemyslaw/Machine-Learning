@@ -184,10 +184,10 @@ class KMean:
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title("epoka " + str(self.epoch_counter))
-        plt.savefig("../Classification/" + str(self.epoch_counter) + ".png")
+        plt.savefig(str(self.epoch_counter) + ".png")
         plt.clf()
-        self.images.append(imageio.imread("../Classification/" + str(self.epoch_counter) + ".png"))
-        os.remove("../Classification/" + str(self.epoch_counter) + ".png")
+        self.images.append(imageio.imread(str(self.epoch_counter) + ".png"))
+        os.remove(str(self.epoch_counter) + ".png")
 
     # funkcja rysujaca kolejne wykresy
     def animation_plot(self):
@@ -199,14 +199,13 @@ class KMean:
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title("epoka " + str(self.epoch_counter))
-        plt.savefig("../Classification/" + str(self.epoch_counter) + ".png")
+        plt.savefig(str(self.epoch_counter) + ".png")
         plt.clf()
-        self.images.append(imageio.imread("../Classification/" + str(self.epoch_counter) + ".png"))
-        # os.remove("../Classification/" + str(self.epoch_counter) + ".png")
+        self.images.append(imageio.imread(str(self.epoch_counter) + ".png"))
 
     # funkcja tworzaca gifa
     def create_gif(self):
-        imageio.mimsave("../Classification/" + "animacja.gif", self.images, 'GIF', duration=0.5)
+        imageio.mimsave("animacja.gif", self.images, 'GIF', duration=0.5)
 
     # funkcja plotuje wykres bledu
     def plot_error_graph(self):
@@ -214,7 +213,7 @@ class KMean:
         plt.xlabel('Epoka')
         plt.ylabel('Wartosc')
         plt.title("Wartosc bledu kwantyzacji \n ilosc skupien: " + str(self.number_of_centroids))
-        plt.savefig("../Classification/" + "wykres.png")
+        plt.savefig("wykres.png")
         plt.clf()
 
 
@@ -243,10 +242,10 @@ def generate_random_points_in_range(x_min, x_max, y_min, y_max):
 
 
 def main():
-    NUMBER_OF_CENTROIDS = 2
+    NUMBER_OF_CENTROIDS = 12
     NUMBER_OF_EPOCH = 14
     
-    kMean = KMean(points_matrix=create_points("../KohonenAndNeuralGas/Danetestowe.txt", is_comma=True),
+    kMean = KMean(points_matrix=create_points("Danetestowe.txt", is_comma=True),
                   number_of_centroids=NUMBER_OF_CENTROIDS, number_of_epoch=NUMBER_OF_EPOCH)
 
     kMean.train()

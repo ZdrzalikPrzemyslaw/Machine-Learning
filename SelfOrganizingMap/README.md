@@ -14,9 +14,9 @@
     </tr>
   <tr>
     <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_Before.png"
-     alt="Approximation plot"/></td>
+     alt="Before Kohonen"/></td>
     <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Kohonen_After.png"
-     alt="Error plot"/></td>
+     alt="After Kohonen"/></td>
   </tr>
  </table>
  
@@ -31,15 +31,33 @@
     </tr>
   <tr>
     <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/NeuralGas_Before.png"
-     alt="Approximation plot"/></td>
+     alt="Before Neural Gas"/></td>
     <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/NeuralGas_After.png"
-     alt="Error plot"/></td>
+     alt="After Neural Gas"/></td>
   </tr>
  </table>
 
 
 ### [K-Means clustering](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/KMeans)
 
+
+<table cellpadding="0" cellspacing="0" border="0">
+    <tr>
+    <td><p align="center">before</p></td>
+    <td><p align="center">after</p></td>
+    </tr>
+  <tr>
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/KMeans_Before.png"
+     alt="Before KMeans"/></td>
+    <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/KMeans_After.png"
+     alt="After KMeans"/></td>
+  </tr>
+ </table>
+ 
+ <p align="center">
+ <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/KMeans_Example_Error.png"
+     alt="Error KMeans"/>
+ </p>
 
 
 ### [Image Quantization](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/ImageQuantization)
