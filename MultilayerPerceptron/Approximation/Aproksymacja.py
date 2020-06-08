@@ -154,6 +154,12 @@ def plot_file():
 
 def plot_function(siec, title, neurons, points=None):
     if points is not None:
+        values = read_2d_float_array_from_file(points)
+        values2 = numpy.zeros_like(values)
+        indexes = numpy.argsort(values[:, 0])
+        for i in range(len(indexes)):
+            values2[i] = values[indexes[i]]
+        points = values2
         values = []
         plt.plot(points[:, 0], points[:, 1])
         points = numpy.arange(-10, 10, 0.01)
@@ -184,26 +190,23 @@ def main():
     numpy.random.seed(0)
     neurons = 30
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, 1, True)
+    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons,
+                         number_of_neurons_output=1, number_of_inputs=1, is_bias=True)
     train_file = "approximation_train_1.txt"
     iterations = 1000
     # dane wejściowe, dane wyjściowe, ilość epochów
     siec.train(read_2d_float_array_from_file(train_file)[:, 0], read_2d_float_array_from_file(train_file)[:, 1],
                iterations)
     plot_file()
-    counter = 0
-    blad = 0
-    for i in read_2d_float_array_from_file("approximation_test.txt"):
-        blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
-        counter += 1
-    blad = blad / counter
-    values = read_2d_float_array_from_file("approximation_test.txt")
-    values2 = numpy.zeros_like(values)
-    indexes = numpy.argsort(values[:, 0])
-    for i in range(len(indexes)):
-        values2[i] = values[indexes[i]]
-    plot_function(siec, train_file, neurons, values2)
-    print("BLAD ", blad)
+    test_file = "approximation_test.txt"
+    plot_function(siec, train_file, neurons, test_file)
+    # counter = 0
+    # blad = 0
+    # for i in read_2d_float_array_from_file("approximation_test.txt"):
+    #     blad += ((siec.calculate_outputs(i[0])[1][0][0] - i[1]) ** 2) / 2
+    #     counter += 1
+    # blad = blad / counter
+    # print("BLAD ", blad)
 
 
 if __name__ == "__main__":
