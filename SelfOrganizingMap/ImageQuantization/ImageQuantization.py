@@ -238,11 +238,11 @@ def save_new_picture(image, kohonen):
             if (i * 100) / size_x > percent:
                 percent += 1
                 print("Currently ", (i * 100) / size_x, "% done (writing to file)")
-        image.save('SUPEROBRAZEK.jpg')
+        image.save('Images/Quantizated_Image')
 
 
 def main():
-    im = Image.open('3399232.jpg')
+    im = Image.open('Images/3399232.jpg')
     kohonen = KohonenOrNeuralGas(input_matrix=image_pixels_to_array(im),
                                  neuron_num=9,
                                  is_gauss=True, is_neural_gas=True, epoch_count=1, neighbourhood_radius=1.5,

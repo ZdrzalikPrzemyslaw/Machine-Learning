@@ -2,7 +2,7 @@
 * Choose the picture to quantize
 
 ```python
-im = Image.open('3399232.jpg')
+im = Image.open('Images/3399232.jpg')
 ```
 
 * Initializing the Network
