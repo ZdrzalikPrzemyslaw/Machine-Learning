@@ -55,7 +55,7 @@
  </table>
  
  <p align="center">
- <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/KMeans_Example_Error.png"
+ <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/K_Means_Example_Error.png"
      alt="Error KMeans"/>
  </p>
 
