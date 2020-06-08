@@ -3,6 +3,9 @@
 ## Examples
 
 ###  [Kohonen and Neural Gas Algorithms](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/SelfOrganizingMap/KohonenAndNeuralGas)
+<p align="center">
+<b>Kohonen</b>
+</p>
 
 <table cellpadding="0" cellspacing="0" border="0">
     <tr>
