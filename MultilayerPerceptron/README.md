@@ -4,13 +4,11 @@
 
 #### Example output
 
-* Plot of the function approximation
 <p align="center">
+* Plot of the function approximation
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png"
      alt="Approximation plot"/>
-</p>
 * Change of approximation error over time
-<p align="center">
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Error.png"
      alt="Error plot"/>
 </p>
