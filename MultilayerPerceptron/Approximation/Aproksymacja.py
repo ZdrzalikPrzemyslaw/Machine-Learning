@@ -161,14 +161,15 @@ def plot_function(siec, title, neurons, points=None):
             values2[i] = values[indexes[i]]
         points = values2
         values = []
-        plt.plot(points[:, 0], points[:, 1])
+        plt.plot(points[:, 0], points[:, 1], label="original function")
         points = points[:, 0]
         for i in points:
             values.append(siec.calculate_outputs(i)[1][0][0])
-        plt.plot(points, values, 'o', markersize=1)
+        plt.plot(points, values, 'o', markersize=1, label="aproximation")
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.title("File: " + title[:-4] + ", neuron count = " + str(neurons))
+        plt.legend()
         plt.tight_layout()
         plt.show()
 
