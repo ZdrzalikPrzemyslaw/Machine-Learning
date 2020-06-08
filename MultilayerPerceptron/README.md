@@ -2,6 +2,12 @@
 
 ##[Approximation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Approximation)
 
+#### Example output
+
+![Plot](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png)
+![Error](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Error.png)
+
+
 #### Usage
 * Initializing the Network
 ```python
