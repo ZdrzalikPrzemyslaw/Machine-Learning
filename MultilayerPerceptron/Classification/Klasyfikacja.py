@@ -230,12 +230,12 @@ def plot_file(name="mean_squared_error.txt"):
         values = []
         for i in lines:
             values.append(float(i))
-        plt.xlabel('Epoka')
-        plt.ylabel('Ilość popranych przyporządkowań')
-        plt.plot(values, 'o', markersize=1, label="Wszystkie obiekty")
-        plt.plot(values0, 'o', markersize=1, label="Obiekt 1")
-        plt.plot(values1, 'o', markersize=1, label="Obiekt 2")
-        plt.plot(values2, 'o', markersize=1, label="Obiekt 3")
+        plt.xlabel('Epoch')
+        plt.ylabel('Correct Assigments')
+        plt.plot(values, 'o', markersize=2, label="All classes")
+        plt.plot(values0, 'o', markersize=2, label="Class 1")
+        plt.plot(values1, 'o', markersize=2, label="Class 2")
+        plt.plot(values2, 'o', markersize=2, label="Class 3")
         plt.legend()
     else:
         with open(name, "r") as file:
@@ -243,9 +243,9 @@ def plot_file(name="mean_squared_error.txt"):
         values = []
         for i in lines:
             values.append(float(i))
-        plt.xlabel('Epoka')
-        plt.ylabel('Wartość błędu')
-        plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
+        plt.xlabel('Epoch')
+        plt.ylabel('Error for Epoch')
+        plt.title("Mean square error change")
         plt.plot(values, markersize=1)
     plt.show()
 
@@ -267,12 +267,13 @@ def main():
     numpy.random.seed(0)
 
     # neurony w warstwie ukrytej, wyjścia, wejścia, bias
-    siec = NeuralNetwork(5, 3, 1, True)
-
-    # siec.train(numpy.delete(read_2d_float_array_from_file("classification_train.txt"), [0, 1, 2], 1)[:, :-1],
-    #            read_2d_float_array_from_file("classification_train.txt")[:, -1:], 1000)
-    siec.train(numpy.delete(read_2d_float_array_from_file("zad1/Classification/classification_train.txt"), [0, 1, 2], 1)[:, :-1],
-               read_2d_float_array_from_file("zad1/Classification/classification_train.txt")[:, -1:], 1000)
+    neurons = 5
+    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons, is_bias=True,
+                         number_of_neurons_output=3, number_of_inputs=1)
+    train_file = "classification_train.txt"
+    num_of_iterations = 100
+    siec.train(numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 2], 1)[:, :-1],
+               read_2d_float_array_from_file(train_file)[:, -1:], num_of_iterations)
     plot_file()
     plot_file("correct_assigment.txt")
     # sprawdzenie dla zbioru testowego
