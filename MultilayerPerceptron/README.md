@@ -5,7 +5,9 @@
 #### Example output
 
 <p align="center">
- <b>Plot of the function approximation</b>
+ <b>
+ <font size="+5">Plot of the function approximation</font>
+ </b>
  <br> <br>
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Approximation_MLP_Example_Plot.png"
      alt="Approximation plot"/>
