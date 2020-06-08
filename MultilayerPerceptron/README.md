@@ -28,7 +28,7 @@
 </p>
 
 
-###******** [Transformation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Transformation)
+### [Transformation](https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/tree/master/MultilayerPerceptron/Transformation)
 
 <p align="center">
     <img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/Transformation_MLP_Example_Error.png"

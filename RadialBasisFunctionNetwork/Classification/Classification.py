@@ -222,16 +222,16 @@ class NeuralNetwork:
         for i, j, k in zip(self.correct_class_vector[0], self.correct_class_vector[1], self.correct_class_vector[2]):
             values.append(
                 (i + j + k) / (self.amount_of_class[0][0] + self.amount_of_class[1][0] + self.amount_of_class[2][0]))
-        plt.xlabel('Epoka')
-        plt.ylabel('Ilość popranych przyporządkowań')
+        plt.xlabel('Epoch')
+        plt.ylabel('Percentage of correct Classifications')
         # tytul w zależności od eksperymentu
         # plt.title("Liczba neuronów w warstwie radialnej = " + str(neurons))
         # plt.title("Współczynnik momentum = " + str(alfa))
-        plt.title("Współczynnik uczenia = " + str(eta))
-        plt.plot(values, 'o', markersize=2, label="Wszystkie obiekty")
-        plt.plot(values1, 'o', markersize=2, label="Obiekt 1")
-        plt.plot(values2, 'o', markersize=2, label="Obiekt 2")
-        plt.plot(values3, 'o', markersize=2, label="Obiekt 3")
+        plt.title("Learning Coeff = " + str(eta))
+        plt.plot(values, 'o', markersize=2, label="All Classes")
+        plt.plot(values1, 'o', markersize=2, label="Class 1")
+        plt.plot(values2, 'o', markersize=2, label="Class 2")
+        plt.plot(values3, 'o', markersize=2, label="Class 3")
         plt.legend()
         plt.show()
 
@@ -246,14 +246,9 @@ def plot_file():
     for i in lines:
         values.append(float(i))
     plt.plot(values, markersize=1)
-    plt.xlabel('Iteracja')
-    plt.ylabel('Wartość błędu')
-    # tytul w zależności od eksperymentu
-    # plt.title("Zmiana Błędu Średniokwadratowego, wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
-    plt.title("Zmiana Błędu Średniokwadratowego,\n liczba neuronów w warstwie radialnej = " + str(neurons))
-    # plt.title("Zmiana Błędu Średniokwadratowego,\n momentum = " + str(alfa))
-    # plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta))
-    # zapisz do pliku w zależności od eksperymentu
+    plt.xlabel('Epoch')
+    plt.ylabel('Error for epoch')
+    plt.title("Mean square Error change")
     plt.show()
     plt.clf()
 
@@ -271,7 +266,7 @@ def plot_function(siec, title, neurons, points=None):
         plt.ylabel('Y')
         # tytul w zależności od eksperymentu
         # plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
-        plt.title("liczba neuronów w warstwie radialnej = " + str(neurons))
+        plt.title("Number of neurons = " + str(neurons))
         # plt.title("wsp. uczenia = " + str(eta))
         # plt.title("wsp. momentum = " + str(alfa))
         plt.tight_layout()
@@ -293,32 +288,21 @@ def read_2d_float_array_from_file(file_name):
 
 
 # liczba neuronow w warstwie radialnej
-neurons = 3
+neurons = 12
 
 
 def main():
     numpy.random.seed(0)
 
-    # Approximation
-    train_file = "approximation_train_1.txt"
-    test_file = "approximation_test.txt"
+    train_file = "classification_train.txt"
+    test_file = "classification_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-
-    # Classification
-    # train_file = "RadialBasisFunctionNetwork/Classification/classification_train.txt"
-    # test_file = "RadialBasisFunctionNetwork/Classification/classification_test.txt"
-    # data_input = read_2d_float_array_from_file(train_file)[:, 0:4]
-    # data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-
-    # ilość neuronów, ilość wyjść, czy_bias
-    # numpy.delete(read_2d_float_array_from_file(train_file), [0, 1, 3], 1)
-    siec = NeuralNetwork(neurons, 3, False, data_input,
-                         data_expected_output, is_aproximation=True)
+    siec = NeuralNetwork(neurons, 3, True, data_input,
+                         data_expected_output, is_aproximation=False)
     iterations = 100
     siec.train(iterations)
     plot_file()
-    # TODO: fix if
     if not siec.is_aproximation:
         siec.plot_classification()
         correct_amount = 0
@@ -357,12 +341,10 @@ def main():
                 elif i[-1] == 3:
                     all_3[classa - 1] += 1
                 it += 1
-        print("KLASYFIKACJA OBIEKTOW  :   1,  2,  3")
-        print("KLASYFIKACJA OBIEKTU 1 : ", all_1)
-        print("KLASYFIKACJA OBIEKTU 2 : ", all_2)
-        print("KLASYFIKACJA OBIEKTU 3 : ", all_3)
-        print("ILOŚC Wszystkich: ", it)
-        print("ILOŚć Odgadnietych: ", correct_amount)
+        print("Classification Objects  :   1,  2,  3")
+        print("Classification Object 1 : ", all_1)
+        print("Classification Object 2 : ", all_2)
+        print("Classification Object 3 : ", all_3)
 
     elif siec.is_aproximation:
         values = read_2d_float_array_from_file(test_file)

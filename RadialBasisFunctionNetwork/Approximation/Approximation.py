@@ -172,9 +172,9 @@ def plot_file():
     for i in lines:
         values.append(float(i))
     plt.plot(values, markersize=1)
-    plt.xlabel('Iteracja')
-    plt.ylabel('Wartość błędu')
-    plt.title("Zmiana Błędu Średniokwadratowego,\n wsp. uczenia = " + str(eta) + " momentum = " + str(alfa))
+    plt.xlabel('Epoch')
+    plt.ylabel('Error for epoch')
+    plt.title("Mean square error change")
     plt.show()
 
 
@@ -188,7 +188,7 @@ def plot_function(siec, title, neurons, points=None):
         plt.plot(points, values, 'o', markersize=1)
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
+        plt.title("File: " + title[:-4] + ", num of neurons = " + str(neurons))
         plt.tight_layout()
         plt.show()
 
@@ -207,12 +207,12 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
-    # numpy.random.seed(0)
-    neurons = 20
+    numpy.random.seed(0)
+    neurons = 8
     train_file = "approximation_train_1.txt"
     test_file = "approximation_test.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
+    siec = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0],
                          read_2d_float_array_from_file(train_file)[:, 1])
     iterations = 100
     # dane wejściowe, dane wyjściowe, ilość epochów
