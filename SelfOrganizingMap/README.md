@@ -68,8 +68,8 @@
 
 <table cellpadding="0" cellspacing="0" border="0">
     <tr>
-    <td><p align="center">before</p></td>
-    <td><p align="center">after</p></td>
+    <td><p align="center">Original</p></td>
+    <td><p align="center">After Quantization</p></td>
     </tr>
   <tr>
     <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantization_Before.jpg"
@@ -85,8 +85,8 @@
 
 <table cellpadding="0" cellspacing="0" border="0">
     <tr>
-    <td><p align="center">before</p></td>
-    <td><p align="center">after</p></td>
+    <td><p align="center">Original</p></td>
+    <td><p align="center">After Quantization</p></td>
     </tr>
   <tr>
     <td><img src="https://github.com/ZdrzalikPrzemyslaw/Machine-Learning/blob/master/.github/ImageQuantization_Before_2.jpg"
