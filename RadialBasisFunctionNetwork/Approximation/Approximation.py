@@ -215,17 +215,17 @@ def read_2d_float_array_from_file(file_name):
 
 def main():
     numpy.random.seed(0)
-    neurons = 8
+    neurons = 7
     train_file = "approximation_train_1.txt"
     test_file = "approximation_test.txt"
     # ilość neuronów, ilość wyjść, ilość wejść, czy_bias
-    Network = NeuralNetwork(neurons, 1, True, read_2d_float_array_from_file(train_file)[:, 0],
+    siec = NeuralNetwork(neurons, 1, False, read_2d_float_array_from_file(train_file)[:, 0],
                          read_2d_float_array_from_file(train_file)[:, 1])
     iterations = 100
     # dane wejściowe, dane wyjściowe, ilość epochów
-    Network.train(iterations)
+    siec.train(iterations)
     plot_file()
-    plot_function(Network, train_file, neurons, test_file)
+    plot_function(siec, train_file, neurons, test_file)
 
 
 if __name__ == "__main__":

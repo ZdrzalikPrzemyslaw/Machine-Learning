@@ -255,22 +255,23 @@ def plot_file():
 
 def plot_function(siec, title, neurons, points=None):
     if points is not None:
+        values = read_2d_float_array_from_file(points)
+        values2 = numpy.zeros_like(values)
+        indexes = numpy.argsort(values[:, 0])
+        for i in range(len(indexes)):
+            values2[i] = values[indexes[i]]
+        points = values2
         values = []
-        for i in points:
-            values.append(siec.calculate_outputs(i[0])[1])
-            # print(values[-1])
-        plt.plot(points[:, 0], points[:, 1])
+        plt.plot(points[:, 0], points[:, 1], label="original function")
         points = points[:, 0]
-        plt.plot(points, values, 'o', markersize=1)
+        for i in points:
+            values.append(siec.calculate_outputs(i)[1][0])
+        plt.plot(points, values, 'o', markersize=1, label="aproximation")
         plt.xlabel('X')
         plt.ylabel('Y')
-        # tytul w zależności od eksperymentu
-        # plt.title("Plik: " + title[:-4] + ", liczba neuronów = " + str(neurons))
-        plt.title("Number of neurons = " + str(neurons))
-        # plt.title("wsp. uczenia = " + str(eta))
-        # plt.title("wsp. momentum = " + str(alfa))
+        plt.title("File: " + title[:-4] + ", neuron count = " + str(neurons))
+        plt.legend()
         plt.tight_layout()
-        # zapisz do pliku w zależności od eksperymentu
         plt.show()
 
 
@@ -291,15 +292,16 @@ def read_2d_float_array_from_file(file_name):
 
 
 def main():
+    neurons = 10
     numpy.random.seed(0)
 
-    train_file = "classification_train.txt"
-    test_file = "classification_test.txt"
+    train_file = "approximation_train_1.txt"
+    test_file = "approximation_test.txt"
     data_input = read_2d_float_array_from_file(train_file)[:, :-1]
     data_expected_output = read_2d_float_array_from_file(train_file)[:, -1]
-    siec = NeuralNetwork(number_of_neurons_hidden_layer=10, number_of_neurons_output=3,
+    siec = NeuralNetwork(number_of_neurons_hidden_layer=neurons, number_of_neurons_output=1,
                          is_bias=True, input_data=data_input,
-                         expected_outputs=data_expected_output, is_aproximation=False)
+                         expected_outputs=data_expected_output, is_aproximation=True)
     iterations = 100
     siec.train(iterations)
     plot_file()
@@ -347,12 +349,7 @@ def main():
         print("Classification Object 3 : ", all_3)
 
     elif siec.is_aproximation:
-        values = read_2d_float_array_from_file(test_file)
-        values2 = numpy.zeros_like(values)
-        indexes = numpy.argsort(values[:, 0])
-        for i in range(len(indexes)):
-            values2[i] = values[indexes[i]]
-        plot_function(siec, train_file, neurons, values2)
+        plot_function(siec, train_file, neurons, test_file)
 
 
 if __name__ == "__main__":

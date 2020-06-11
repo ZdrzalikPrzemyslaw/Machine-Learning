@@ -63,7 +63,7 @@ def main():
     test = kmeans(test[:, 0:2], 10, 200)
 
     print("hello")
-
+    
 
 if __name__ == '__main__':
     main()
